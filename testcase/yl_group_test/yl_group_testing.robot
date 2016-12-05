@@ -3,7 +3,7 @@ Resource    ../../Resources/variables.robot
 Resource    ../../Resources/keywords.robot
 
 *** Variables ***
-${SLEEP_TIME}    20m
+${COMMAND_INTERVAL}    20m
 
 *** Test Cases ***
 Demo1
@@ -14,67 +14,67 @@ Demo1
 Demo2
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${SLEEP_TIME}
+    \    Sleep    ${COMMAND_INTERVAL}
 
     Close Browser
 

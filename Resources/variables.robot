@@ -6,7 +6,7 @@ ${BROWSER_CHROME}         chrome
 
 #Delays
 ${SHORT_DELAY}            3s
-${LONG_DELAY}             17m
+${COMMAND_INTERVAL}       17m
 ${COMMAND_DELAY}          1s
 
 #Log Prefix
