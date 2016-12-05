@@ -1,6 +1,6 @@
 *** Settings ***
-Resource    ../Resources/variables.robot
-Resource    ../Resources/keywords.robot
+Resource    ../../Resources/variables.robot
+Resource    ../../Resources/keywords.robot
 
 *** Test Cases ***
 Demo1
