@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20161205 11:56:07.157" generator="Robot 3.0 (Python 2.7.11 on win32)">
+<suite source="C:\Users\Mark.Wang\Documents\robotframework\LoRaWANScripts\Project\testcase\yl\yl_group_testing.robot" id="s1" name="Yl Group Testing">
+<test id="s1-t1" name="Create Dictionary Test">
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>${BROWSER_FIREFOX}</arg>
+</arguments>
+<msg timestamp="20161205 11:56:07.189" level="FAIL">Variable '${BROWSER_FIREFOX}' not found.</msg>
+<status status="FAIL" endtime="20161205 11:56:07.189" starttime="20161205 11:56:07.188"></status>
+</kw>
+<status status="FAIL" endtime="20161205 11:56:07.189" critical="yes" starttime="20161205 11:56:07.187">Variable '${BROWSER_FIREFOX}' not found.</status>
+</test>
+<status status="FAIL" endtime="20161205 11:56:07.191" starttime="20161205 11:56:07.159"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="0">Critical Tests</stat>
+<stat fail="1" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" id="s1" name="Yl Group Testing" pass="0">Yl Group Testing</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20161205 11:56:07.178" level="ERROR">Error in file 'C:\Users\Mark.Wang\Documents\robotframework\LoRaWANScripts\Project\testcase\yl\yl_group_testing.robot': Resource file 'variables.robot' does not exist.</msg>
+<msg timestamp="20161205 11:56:07.179" level="ERROR">Error in file 'C:\Users\Mark.Wang\Documents\robotframework\LoRaWANScripts\Project\testcase\yl\yl_group_testing.robot': Resource file 'keywords.robot' does not exist.</msg>
+<msg timestamp="20161205 11:56:07.186" level="ERROR">Error in file 'C:\Users\Mark.Wang\Documents\robotframework\LoRaWANScripts\Project\testcase\yl\yl_group_testing.robot': Test library 'mylibrary.py' does not exist.</msg>
+</errors>
+</robot>
