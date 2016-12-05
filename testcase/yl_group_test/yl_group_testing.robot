@@ -1,24 +1,79 @@
 *** Settings ***
-Resource    variables.robot
-Resource    keywords.robot
-Library    Collections
-Library    mylibrary.py
-
-*** Variables ***
-#Resource Path
-${RES_PATH}               C:\Users\Mark.Wang\Documents\robotframework\LoRaWANScripts\Project\Resources
-
-@{all}    0001    0002    0003
-@{all2}        7ff9011020000095    7ff9011020000096    7ff9011020000097
-...               7ff9011020000098    7ff9011020000099    7ff9011020000100
-...               7ff9011020000085    7ff9011020000086    7ff9011020000087
-
-
-
+Resource    ../Resources/variables.robot
+Resource    ../Resources/keywords.robot
 
 *** Test Cases ***
-Create Dictionary Test
-    Log to console    ${BROWSER_FIREFOX}
+Demo1
+    FMS Login
+    Select GateWay    ${YL_GATEWAY}
+    Sleep    30s
+
+Demo2
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+    \    Sleep    20m
+
+    Close Browser
 
 
 
