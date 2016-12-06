@@ -18,8 +18,8 @@ ${PASSWORD}               freestyle
 
 
 #FMS_URL
-${FMS_TESTING_URL}        http://10.10.20.227:83                    # Mark's Testing Envionment
 ${FMS_URL}                http://lora-admin.dev.freestyleiot.com/   # Dev Envionment
+#                         http://10.10.20.227:83                    # Mark's Testing Envionment
 
 #FMS Element - Command List Popup
 ${EXECUTE_BUTTON}         Execute
@@ -70,9 +70,23 @@ ${TEST_GATEWAY}           990200000000269b                          # Mark's tes
 ...                  GET_YL_METER_SHUTOFFCODES
 
 @{MC_GET_COMMAND}    GET_METER_TYPE
-...                  GET_METER_CURRENT_PRESSURE
 ...                  GET_METER_SUMMATION_DELIVERED
+#...                 GET_METER_CURRENT_PRESSURE             # GET_METER_CURRENT_PRESSURE not support by the meter.
 ...                  GET_METER_GAS_VALVE_STATE
+#...                 GET_METER_PRESSURE_SCHEDULE            # GET_METER_PRESSURE_SCHEDULE not support by the meter.
 ...                  GET_METER_SUMMATION_SCHEDULE
 ...                  GET_MC_METER_READING_VALUE
+...                  GET_MC_METER_STATUS
+#...                  GET_MC_METER_CUSTOMER_ID              # Release 2 will be available.
 ...                  GET_MC_METER_TIME
+
+@{MC_SET_COMMAND}    SET_METER_GAS_VALVE_STATE
+...                  SET_METER_SUMMATION_SCHEDULE
+#...                 SET_METER_PRESSURE_SCHEDULE            # SET_METER_PRESSURE_SCHEDULE not support by the meter.
+#...                 GET_METER_PILOTRANGE                   # GET_METER_PILOTRANGE not supported by the meter.
+...                  SET_MC_METER_READING_VALUE
+#...                 SET_MC_METER_STATUS                    # Release 2 will be available.
+#...                 SET_MC_METER_CUSTOMER_ID               # Release 2 will be available.
+...                  SET_MC_METER_TIME
+...                  SET_MC_CONFIG_CENTER_SHUTDOWN
+...                  SET_MC_CONFIG_DISABLE_CENTER_SHUTDOWN

@@ -1,52 +1,27 @@
 *** Settings ***
 Resource    ../../Resources/variables.robot
 Resource    ../../Resources/keywords.robot
+Suite Setup    FMS Login
+Suite Teardown    Close Browser
 
 *** Variables ***
 ${COMMAND_INTERVAL}    20m
 
+@{MC_EIDS}        7ff9011020000095    7ff9011020000096    7ff9011020000097
+# ...               7ff9011020000098    7ff9011020000099    7ff9011020000100
+# ...               7ff9011020000085    7ff9011020000086    7ff9011020000087
+# ...               7ff9011020000088    7ff9011020000089    7ff9011020000090
+# ...               7ff9011020000091    7ff9011020000093    7ff9011020000094
+
 *** Test Cases ***
-Demo1
-    FMS Login
+Checking Connectivity
     Select GateWay    ${MC_GATEWAY}
     Sleep    30s
-Demo2
-    : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
+    :FOR    ${x}    IN RANGE    10
+    \    Loop For Get Commands
 
-    : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
+*** Keywords ***
+Loop For Get Commands
     : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
     \    Sleep    ${COMMAND_INTERVAL}

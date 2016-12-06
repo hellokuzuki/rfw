@@ -9,15 +9,17 @@ Open Browser to the FMS index Page
     Log To Console    ${LOG_PREFIX} "Open Browser to the FMS index Page" has been executed.
 
 Input Login User Name
+    Wait Until Element Is Visible    user
     Input Text    user    ${USERNAME}
     Log To Console    ${LOG_PREFIX} "Input Login User Name" has been executed.
 
 Input Login Password
+    Wait Until Element Is Visible    pass
     Input Text    pass    ${PASSWORD}
     Log To Console    ${LOG_PREFIX} "Input Login Password" has been executed.
 
 Click Login Button
-    Click Button    Sign in
+    Submit Form
     Log To Console    ${LOG_PREFIX} "Click Login Button" has been executed.
 
 Wait for Login Process
@@ -26,6 +28,7 @@ Wait for Login Process
 
 Select GateWay
     [Arguments]    ${gateway_eid}
+    Wait Until Element Is Visible    xpath=//div[contains(text(), "${gateway_eid}")]
     Click Element    xpath=//div[contains(text(), "${gateway_eid}")]
     Sleep    ${COMMAND_DELAY}
     Log To Console    ${LOG_PREFIX} "Select GateWay" has been executed.
@@ -35,43 +38,50 @@ FMS Login
     Input Login User Name
     Input Login Password
     Click Login Button
-    Wait for Login Process
+    # Wait for Login Process
     Log To Console    ${LOG_PREFIX} "FMS Login" has been executed.
 
 Click Device EID
     [Arguments]    ${device_eid}
+    Wait Until Element Is Visible    xpath=//div[contains(text(), "${device_eid}")]
     Click Element    xpath=//div[contains(text(), "${device_eid}")]
     Sleep    ${COMMAND_DELAY}
     # Log To Console    ${LOG_PREFIX} "Click Device EID" ${device_eid} has been executed.
 
 Click Execute Button
+    Wait Until Element Is Visible    xpath=//span[contains(text(), "${EXECUTE_BUTTON}")]
     Click Element    xpath=//span[contains(text(), "${EXECUTE_BUTTON}")]
     Sleep    ${COMMAND_DELAY}
     # Log To Console    ${LOG_PREFIX} "Click Execute Button" has been executed.
 
 Input Command
     [Arguments]    ${command}
+    Wait Until Element Is Visible    command
     Input Text    command    ${command}
     Sleep    ${COMMAND_DELAY}
     # Log To Console    ${LOG_PREFIX} "Input Command" ${command} has been executed.
 
 Input Parameter
     [Arguments]    ${parameter}
+    Wait Until Element Is Visible    cmd_args
     Input Text    cmd_args    ${parameter}
     Sleep    ${COMMAND_DELAY}
     # Log To Console    ${LOG_PREFIX} "Input Parameter" ${parameter} has been executed.
 
 Click Send Button
+    Wait Until Element Is Visible    xpath=//span[contains(text(), "${SEND_BUTTON}")]
     Click Element    xpath=//span[contains(text(), "${SEND_BUTTON}")]
     Sleep    ${COMMAND_DELAY}
     # Log To Console    ${LOG_PREFIX} "Click Send Button" has been executed.
 
 Click OK Button
+    Wait Until Element Is Visible    xpath=//span[contains(text(), "${OK_BUTTON}")]
     Click Element    xpath=//span[contains(text(), "${OK_BUTTON}")]
     Sleep    ${COMMAND_DELAY}
     # Log To Console    ${LOG_PREFIX} "Click OK Button" has been executed.
 
 Click Cancel Button
+    Wait Until Element Is Visible    xpath=//span[contains(text(), "${CANCEL_BUTTON}")]
     Click Element    xpath=//span[contains(text(), "${CANCEL_BUTTON}")]
     Sleep    ${COMMAND_DELAY}
     # Log To Console    ${LOG_PREFIX} "Click OK Button" has been executed.
