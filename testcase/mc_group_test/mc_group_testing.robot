@@ -16,6 +16,7 @@ ${COMMAND_INTERVAL}    20m
 *** Test Cases ***
 Checking Connectivity
     Select GateWay    ${MC_GATEWAY}
+    # Have to manually sort and resize the end devices col. so put 30 secs.
     Sleep    30s
     :FOR    ${x}    IN RANGE    10
     \    Loop For Get Commands

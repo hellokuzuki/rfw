@@ -1,33 +1,360 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generated="20161205 11:56:07.157" generator="Robot 3.0 (Python 2.7.11 on win32)">
-<suite source="C:\Users\Mark.Wang\Documents\robotframework\LoRaWANScripts\Project\testcase\yl\yl_group_testing.robot" id="s1" name="Yl Group Testing">
-<test id="s1-t1" name="Create Dictionary Test">
+<robot generated="20161206 16:08:01.824" generator="Robot 3.0 (Python 2.7.11 on win32)">
+<suite source="C:\Users\Mark.Wang\Documents\robotframework\LoRaWANScripts\Project\testcase\yl_group_test\yl_group_testing.robot" id="s1" name="Yl Group Testing">
+<kw type="setup" name="FMS Login" library="keywords">
+<kw name="Open Browser to the FMS index Page" library="keywords">
+<kw name="Open Browser" library="Selenium2Library">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>${FMS_URL}</arg>
+<arg>${BROWSER_FIREFOX}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:01.932" level="INFO">Opening browser 'Firefox' to base url 'http://lora-admin.dev.freestyleiot.com/'</msg>
+<status status="PASS" endtime="20161206 16:08:08.667" starttime="20161206 16:08:01.932"></status>
+</kw>
+<kw name="Maximize Browser Window" library="Selenium2Library">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" endtime="20161206 16:08:08.766" starttime="20161206 16:08:08.667"></status>
+</kw>
 <kw name="Log To Console" library="BuiltIn">
 <doc>Logs the given message to the console.</doc>
 <arguments>
-<arg>${BROWSER_FIREFOX}</arg>
+<arg>${LOG_PREFIX} "Open Browser to the FMS index Page" has been executed.</arg>
 </arguments>
-<msg timestamp="20161205 11:56:07.189" level="FAIL">Variable '${BROWSER_FIREFOX}' not found.</msg>
-<status status="FAIL" endtime="20161205 11:56:07.189" starttime="20161205 11:56:07.188"></status>
+<status status="PASS" endtime="20161206 16:08:08.767" starttime="20161206 16:08:08.766"></status>
 </kw>
-<status status="FAIL" endtime="20161205 11:56:07.189" critical="yes" starttime="20161205 11:56:07.187">Variable '${BROWSER_FIREFOX}' not found.</status>
-</test>
-<status status="FAIL" endtime="20161205 11:56:07.191" starttime="20161205 11:56:07.159"></status>
-</suite>
-<statistics>
-<total>
-<stat fail="1" pass="0">Critical Tests</stat>
-<stat fail="1" pass="0">All Tests</stat>
-</total>
-<tag>
-</tag>
-<suite>
-<stat fail="1" id="s1" name="Yl Group Testing" pass="0">Yl Group Testing</stat>
-</suite>
-</statistics>
-<errors>
-<msg timestamp="20161205 11:56:07.178" level="ERROR">Error in file 'C:\Users\Mark.Wang\Documents\robotframework\LoRaWANScripts\Project\testcase\yl\yl_group_testing.robot': Resource file 'variables.robot' does not exist.</msg>
-<msg timestamp="20161205 11:56:07.179" level="ERROR">Error in file 'C:\Users\Mark.Wang\Documents\robotframework\LoRaWANScripts\Project\testcase\yl\yl_group_testing.robot': Resource file 'keywords.robot' does not exist.</msg>
-<msg timestamp="20161205 11:56:07.186" level="ERROR">Error in file 'C:\Users\Mark.Wang\Documents\robotframework\LoRaWANScripts\Project\testcase\yl\yl_group_testing.robot': Test library 'mylibrary.py' does not exist.</msg>
-</errors>
-</robot>
+<status status="PASS" endtime="20161206 16:08:08.767" starttime="20161206 16:08:01.932"></status>
+</kw>
+<kw name="Input Login User Name" library="keywords">
+<kw name="Wait Until Element Is Visible" library="Selenium2Library">
+<doc>Waits until element specified with `locator` is visible.</doc>
+<arguments>
+<arg>user</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:09.174" starttime="20161206 16:08:08.767"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given `text` into text field identified by `locator`.</doc>
+<arguments>
+<arg>user</arg>
+<arg>${USERNAME}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:09.174" level="INFO">Typing text 'freestyle' into text field 'user'</msg>
+<status status="PASS" endtime="20161206 16:08:09.383" starttime="20161206 16:08:09.174"></status>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>${LOG_PREFIX} "Input Login User Name" has been executed.</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:09.383" starttime="20161206 16:08:09.383"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:09.384" starttime="20161206 16:08:08.767"></status>
+</kw>
+<kw name="Input Login Password" library="keywords">
+<kw name="Wait Until Element Is Visible" library="Selenium2Library">
+<doc>Waits until element specified with `locator` is visible.</doc>
+<arguments>
+<arg>pass</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:10.099" starttime="20161206 16:08:09.384"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given `text` into text field identified by `locator`.</doc>
+<arguments>
+<arg>pass</arg>
+<arg>${PASSWORD}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:10.099" level="INFO">Typing text 'freestyle' into text field 'pass'</msg>
+<status status="PASS" endtime="20161206 16:08:10.200" starttime="20161206 16:08:10.099"></status>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>${LOG_PREFIX} "Input Login Password" has been executed.</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:10.201" starttime="20161206 16:08:10.200"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:10.201" starttime="20161206 16:08:09.384"></status>
+</kw>
+<kw name="Click Login Button" library="keywords">
+<kw name="Click Button" library="Selenium2Library">
+<doc>Clicks a button identified by `locator`.</doc>
+<arguments>
+<arg>${SIGNIN_BTN}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:10.201" level="INFO">Clicking button 'Sign in'.</msg>
+<status status="PASS" endtime="20161206 16:08:12.370" starttime="20161206 16:08:10.201"></status>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>${LOG_PREFIX} "Click Login Button" has been executed.</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:12.371" starttime="20161206 16:08:12.370"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:12.371" starttime="20161206 16:08:10.201"></status>
+</kw>
+<kw name="Wait for Login Process" library="keywords">
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${SHORT_DELAY}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:15.371" level="INFO">Slept 3 seconds</msg>
+<status status="PASS" endtime="20161206 16:08:15.371" starttime="20161206 16:08:12.371"></status>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>${LOG_PREFIX} "Wait for Login Process" has been executed.</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:15.373" starttime="20161206 16:08:15.371"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:15.373" starttime="20161206 16:08:12.371"></status>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>${LOG_PREFIX} "FMS Login" has been executed.</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:15.374" starttime="20161206 16:08:15.373"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:15.374" starttime="20161206 16:08:01.932"></status>
+</kw>
+<test id="s1-t1" name="Checking Connectivity">
+<kw name="Select GateWay" library="keywords">
+<arguments>
+<arg>${YL_GATEWAY}</arg>
+</arguments>
+<kw name="Wait Until Element Is Visible" library="Selenium2Library">
+<doc>Waits until element specified with `locator` is visible.</doc>
+<arguments>
+<arg>xpath=//div[contains(text(), "${gateway_eid}")]</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:15.492" starttime="20161206 16:08:15.376"></status>
+</kw>
+<kw name="Click Element" library="Selenium2Library">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>xpath=//div[contains(text(), "${gateway_eid}")]</arg>
+</arguments>
+<msg timestamp="20161206 16:08:15.492" level="INFO">Clicking element 'xpath=//div[contains(text(), "99020000000026e2")]'.</msg>
+<status status="PASS" endtime="20161206 16:08:15.714" starttime="20161206 16:08:15.492"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${COMMAND_DELAY}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:16.714" level="INFO">Slept 1 second</msg>
+<status status="PASS" endtime="20161206 16:08:16.714" starttime="20161206 16:08:15.714"></status>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>${LOG_PREFIX} "Select GateWay" has been executed.</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:16.716" starttime="20161206 16:08:16.714"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:16.716" starttime="20161206 16:08:15.376"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>30s</arg>
+</arguments>
+<msg timestamp="20161206 16:08:46.717" level="INFO">Slept 30 seconds</msg>
+<status status="PASS" endtime="20161206 16:08:46.717" starttime="20161206 16:08:16.717"></status>
+</kw>
+<kw type="for" name="${x} IN RANGE [ 10 ]">
+<kw type="foritem" name="${x} = 0">
+<kw name="Loop For Get Commands">
+<kw type="for" name="${COMMAND} IN [ @{YL_GET_COMMAND} ]">
+<kw type="foritem" name="${COMMAND} = GET_METER_SUMMATION_DELIVERED">
+<kw name="Send Get Command To Group Devices" library="keywords">
+<arguments>
+<arg>${COMMAND}</arg>
+<arg>@{YL_EIDS}</arg>
+</arguments>
+<kw type="for" name="${eid} IN [ @{eids} ]">
+<kw type="foritem" name="${eid} = 7ff9011020000063">
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>${LOG_PREFIX} Send Get Command ${command} To Group Device ${eid} started.</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:46.723" starttime="20161206 16:08:46.721"></status>
+</kw>
+<kw name="Click Device EID" library="keywords">
+<arguments>
+<arg>${eid}</arg>
+</arguments>
+<kw name="Wait Until Element Is Visible" library="Selenium2Library">
+<doc>Waits until element specified with `locator` is visible.</doc>
+<arguments>
+<arg>xpath=//div[contains(text(), "${device_eid}")]</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:46.809" starttime="20161206 16:08:46.724"></status>
+</kw>
+<kw name="Click Element" library="Selenium2Library">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>xpath=//div[contains(text(), "${device_eid}")]</arg>
+</arguments>
+<msg timestamp="20161206 16:08:46.810" level="INFO">Clicking element 'xpath=//div[contains(text(), "7ff9011020000063")]'.</msg>
+<status status="PASS" endtime="20161206 16:08:46.990" starttime="20161206 16:08:46.810"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${COMMAND_DELAY}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:47.990" level="INFO">Slept 1 second</msg>
+<status status="PASS" endtime="20161206 16:08:47.990" starttime="20161206 16:08:46.990"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:47.990" starttime="20161206 16:08:46.723"></status>
+</kw>
+<kw name="Click Execute Button" library="keywords">
+<kw name="Wait Until Element Is Visible" library="Selenium2Library">
+<doc>Waits until element specified with `locator` is visible.</doc>
+<arguments>
+<arg>xpath=//span[contains(text(), "${EXECUTE_BUTTON}")]</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:48.043" starttime="20161206 16:08:47.990"></status>
+</kw>
+<kw name="Click Element" library="Selenium2Library">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>xpath=//span[contains(text(), "${EXECUTE_BUTTON}")]</arg>
+</arguments>
+<msg timestamp="20161206 16:08:48.044" level="INFO">Clicking element 'xpath=//span[contains(text(), "Execute")]'.</msg>
+<status status="PASS" endtime="20161206 16:08:48.190" starttime="20161206 16:08:48.043"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${COMMAND_DELAY}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:49.190" level="INFO">Slept 1 second</msg>
+<status status="PASS" endtime="20161206 16:08:49.190" starttime="20161206 16:08:48.190"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:49.190" starttime="20161206 16:08:47.990"></status>
+</kw>
+<kw name="Input Command" library="keywords">
+<arguments>
+<arg>${command}</arg>
+</arguments>
+<kw name="Wait Until Element Is Visible" library="Selenium2Library">
+<doc>Waits until element specified with `locator` is visible.</doc>
+<arguments>
+<arg>command</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:49.281" starttime="20161206 16:08:49.191"></status>
+</kw>
+<kw name="Input Text" library="Selenium2Library">
+<doc>Types the given `text` into text field identified by `locator`.</doc>
+<arguments>
+<arg>command</arg>
+<arg>${command}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:49.281" level="INFO">Typing text 'GET_METER_SUMMATION_DELIVERED' into text field 'command'</msg>
+<status status="PASS" endtime="20161206 16:08:49.448" starttime="20161206 16:08:49.281"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${COMMAND_DELAY}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:50.449" level="INFO">Slept 1 second</msg>
+<status status="PASS" endtime="20161206 16:08:50.449" starttime="20161206 16:08:49.448"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:50.449" starttime="20161206 16:08:49.191"></status>
+</kw>
+<kw name="Click Send Button" library="keywords">
+<kw name="Wait Until Element Is Visible" library="Selenium2Library">
+<doc>Waits until element specified with `locator` is visible.</doc>
+<arguments>
+<arg>xpath=//span[contains(text(), "${SEND_BUTTON}")]</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:50.533" starttime="20161206 16:08:50.450"></status>
+</kw>
+<kw name="Click Element" library="Selenium2Library">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>xpath=//span[contains(text(), "${SEND_BUTTON}")]</arg>
+</arguments>
+<msg timestamp="20161206 16:08:50.534" level="INFO">Clicking element 'xpath=//span[contains(text(), "Send")]'.</msg>
+<status status="PASS" endtime="20161206 16:08:51.244" starttime="20161206 16:08:50.533"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${COMMAND_DELAY}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:52.245" level="INFO">Slept 1 second</msg>
+<status status="PASS" endtime="20161206 16:08:52.245" starttime="20161206 16:08:51.245"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:52.245" starttime="20161206 16:08:50.450"></status>
+</kw>
+<kw name="Click OK Button" library="keywords">
+<kw name="Wait Until Element Is Visible" library="Selenium2Library">
+<doc>Waits until element specified with `locator` is visible.</doc>
+<arguments>
+<arg>xpath=//span[contains(text(), "${OK_BUTTON}")]</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:52.338" starttime="20161206 16:08:52.246"></status>
+</kw>
+<kw name="Click Element" library="Selenium2Library">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>xpath=//span[contains(text(), "${OK_BUTTON}")]</arg>
+</arguments>
+<msg timestamp="20161206 16:08:52.339" level="INFO">Clicking element 'xpath=//span[contains(text(), "Ok")]'.</msg>
+<status status="PASS" endtime="20161206 16:08:52.532" starttime="20161206 16:08:52.339"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${COMMAND_DELAY}</arg>
+</arguments>
+<msg timestamp="20161206 16:08:53.533" level="INFO">Slept 1 second</msg>
+<status status="PASS" endtime="20161206 16:08:53.533" starttime="20161206 16:08:52.533"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:53.533" starttime="20161206 16:08:52.246"></status>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>${LOG_PREFIX} Send Get Command ${command} To Group Device ${eid} has been executed.</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:53.535" starttime="20161206 16:08:53.534"></status>
+</kw>
+<status status="PASS" endtime="20161206 16:08:53.536" starttime="20161206 16:08:46.721"></status>
+</kw>
+<kw type="foritem" name="${eid} = 7ff9011020000077">
+<kw name="Log To Console" library="BuiltIn">
+<doc>Logs the given message to the console.</doc>
+<arguments>
+<arg>${LOG_PREFIX} Send Get Command ${command} To Group Device ${eid} started.</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:53.537" starttime="20161206 16:08:53.536"></status>
+</kw>
+<kw name="Click Device EID" library="keywords">
+<arguments>
+<arg>${eid}</arg>
+</arguments>
+<kw name="Wait Until Element Is Visible" library="Selenium2Library">
+<doc>Waits until element specified with `locator` is visible.</doc>
+<arguments>
+<arg>xpath=//div[contains(text(), "${device_eid}")]</arg>
+</arguments>
+<status status="PASS" endtime="20161206 16:08:53.602" starttime="20161206 16:08:53.539"></status>
+</kw>
+<kw name="Click Element" library="Selenium2Library">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>xpath=//div[contains(text(), "${device_eid}")]</arg>
+</arguments>
+<msg timestamp="20161206 16:08:53.603" level="INFO">Clicking element 'xpath=//div[contains(text(), "7ff9011020000077")]'.</msg>
+<status status="PASS" endtime="20161206 16:08:53.760" starttime="20161206 16:08:53.602">

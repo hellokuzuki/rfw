@@ -1,82 +1,32 @@
 *** Settings ***
 Resource    ../../Resources/variables.robot
 Resource    ../../Resources/keywords.robot
+Suite Setup    FMS Login
+Suite Teardown    Close Browser
 
 *** Variables ***
 ${COMMAND_INTERVAL}    20m
 
+@{YL_EIDS_ALL}    7ff9011020000071    7ff9011020000072    7ff9011020000073
+# ...               7ff9011020000077    7ff9011020000080    7ff9011020000082
+# ...               7ff9011020000076    7ff9011020000075    7ff9011020000074
+# ...               7ff9011020000063    7ff9011020000064    7ff9011020000065
+# ...               7ff9011020000067    7ff9011020000068    7ff9011020000069
+
 *** Test Cases ***
-Demo1
-    FMS Login
+Checking Connectivity
     Select GateWay    ${YL_GATEWAY}
+    # Have to manually sort and resize the end devices col. so put 30 secs.
     Sleep    30s
+    :FOR    ${x}    IN RANGE    10
+    \    Loop For Get Commands
 
-Demo2
+*** Keywords ***
+Loop For Get Commands
     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
     \    Sleep    ${COMMAND_INTERVAL}
 
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
-    \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
-    \    Sleep    ${COMMAND_INTERVAL}
-
-    Close Browser
 
 
 

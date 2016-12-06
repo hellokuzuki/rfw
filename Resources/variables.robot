@@ -54,12 +54,12 @@ ${TEST_GATEWAY}           990200000000269b                          # Mark's tes
 ...               7ff9011020000088    7ff9011020000089    7ff9011020000090
 ...               7ff9011020000091    7ff9011020000093    7ff9011020000094
 
-@{YL_GET_COMMAND}    GET_METER_TYPE
+@{YL_GET_COMMAND}    GET_METER_SUMMATION_DELIVERED
 ...                  GET_METER_CURRENT_PRESSURE
 ...                  GET_METER_SUMMATION_DELIVERED
 ...                  GET_METER_GAS_VALVE_STATE
-#...                  GET_METER_SUMMATION_SCHEDULE
-#...                  GET_METER_PRESSURE_SCHEDULE
+#...                 GET_METER_SUMMATION_SCHEDULE          # Release 2 will be available.
+#...                 GET_METER_PRESSURE_SCHEDULE           # Release 2 will be available.
 ...                  GET_YL_OFLOW_DETECT_ENABLE
 ...                  GET_YL_OFLOW_DETECT_DURATION
 ...                  GET_YL_OFLOW_DETECT_RATE
@@ -67,8 +67,29 @@ ${TEST_GATEWAY}           990200000000269b                          # Mark's tes
 ...                  GET_YL_PRESSURE_ALARM_LEVEL_HIGH
 ...                  GET_YL_LEAK_DETECT_RANGE
 ...                  GET_YL_MANUAL_RECOVER_ENABLE
-...                  GET_YL_FIRMWARE_VERSION
-...                  GET_YL_METER_SHUTOFFCODES
+# ...                GET_YL_FIRMWARE_VERSION                # Release 2 will be available.
+# ...                GET_YL_METER_SHUTOFFCODES              # Release 2 will be available.
+#...                 GET_METER_TYPE                         # Release 2 will be available.
+# ...                GET_METER_VERSION                      # Release 2 will be available.
+# ...                GET_METER_ELECTRIC_QUANTITY_VALUE      # Release 2 will be available.
+# ...                GET_METER_COMMS_MODE                   # Release 2 will be available.
+# ...                GET_METER_PILOT_LIGHT_MODE             # Release 2 will be available.
+# ...                GET_METER_EARTHQUAKE_SENSOR_STATE      # Release 2 will be available.
+
+@{YL_SET_COMMAND}    SET_METER_GAS_VALVE_STATE
+...                  SET_YL_OFLOW_DETECT_ENABLE
+...                  SET_YL_OFLOW_DETECT_DURATION
+...                  SET_YL_OFLOW_DETECT_RATE
+...                  SET_YL_PRESSURE_ALARM_LEVEL_LOW
+...                  SET_YL_PRESSURE_ALARM_LEVEL_HIGH
+...                  SET_YL_LEAK_DETECT_RANGE
+...                  SET_YL_MANUAL_RECOVER_ENABLE
+# ...                SET_METER_SUMMATION_SCHEDULE           # Release 2 will be available.
+# ...                SET_METER_PRESSURE_SCHEDULE            # Release 2 will be available.
+# ...                SET_METER_COMMS_MODE                   # Release 2 will be available.
+# ...                SET_METER_SERIAL_NUMBER                # Release 2 will be available.
+# ...                SET_METER_PILOT_LIGHT_MODE             # Release 2 will be available.
+# ...                SET_METER_EARTHQUAKE_SENSOR_STATE      # Release 2 will be available.
 
 @{MC_GET_COMMAND}    GET_METER_TYPE
 ...                  GET_METER_SUMMATION_DELIVERED
