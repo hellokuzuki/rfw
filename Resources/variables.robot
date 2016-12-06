@@ -29,6 +29,7 @@ ${CANCEL_BUTTON}          Cancel
 
 #FMS Page Element
 ${LOGS}                   Logs
+${SIGNIN_BTN}             Sign in
 
 #GATEWAY
 ${YL_GATEWAY}             99020000000026e2                          # Dev Gateway 1

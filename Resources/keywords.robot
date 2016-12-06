@@ -19,7 +19,7 @@ Input Login Password
     Log To Console    ${LOG_PREFIX} "Input Login Password" has been executed.
 
 Click Login Button
-    Submit Form
+    Click Button    ${SIGNIN_BTN}
     Log To Console    ${LOG_PREFIX} "Click Login Button" has been executed.
 
 Wait for Login Process
@@ -38,7 +38,7 @@ FMS Login
     Input Login User Name
     Input Login Password
     Click Login Button
-    # Wait for Login Process
+    Wait for Login Process
     Log To Console    ${LOG_PREFIX} "FMS Login" has been executed.
 
 Click Device EID
