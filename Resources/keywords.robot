@@ -87,9 +87,9 @@ Click Cancel Button
     # Log To Console    ${LOG_PREFIX} "Click OK Button" has been executed.
 
 Send Get Command To Single Device
-    [Arguments]    ${command}    ${eid}
-    Log To Console    ${LOG_PREFIX} Send Get Command ${command} To Single Device ${eid} started.
-    Click Device EID    ${eid}
+    [Arguments]    ${command}
+    Log To Console    ${LOG_PREFIX} Send Get Command ${command} To Single Device ${EID} started.
+    Click Device EID    ${EID}
     Click Execute Button
     Input Command    ${command}
     Click Send Button
