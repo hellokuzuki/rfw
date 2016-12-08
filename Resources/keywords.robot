@@ -94,7 +94,7 @@ Send Get Command To Single Device
     Input Command    ${command}
     Click Send Button
     Click OK Button
-    Log To Console    ${LOG_PREFIX} Send Get Command ${command} To Single Device ${eid} has been executed.
+    Log To Console    ${LOG_PREFIX} Send Get Command ${command} To Single Device ${EID} has been executed.
 
 Send Get Command To Group Devices
     [Arguments]    ${command}    @{eids}
@@ -108,15 +108,15 @@ Send Get Command To Group Devices
     \    Log To Console    ${LOG_PREFIX} Send Get Command ${command} To Group Device ${eid} has been executed.
 
 Send Set Command To Single Device
-    [Arguments]    ${command}    ${para}    ${eid}
-    Log To Console    ${LOG_PREFIX} Send Set Command ${command} To Single Device to ${eid} with parameter ${para} started.
-    Click Device EID    ${eid}
+    [Arguments]    ${command}    ${para}
+    Log To Console    ${LOG_PREFIX} Send Set Command ${command} To Single Device to ${EID} with parameter ${para} started.
+    Click Device EID    ${EID}
     Click Execute Button
     Input Command    ${command}
     Input Parameter    ${para}
     Click Send Button
     Click OK Button
-    Log To Console    ${LOG_PREFIX} Send Set Command ${command} To Single Device to ${eid} with parameter ${para} has been executed.
+    Log To Console    ${LOG_PREFIX} Send Set Command ${command} To Single Device to ${EID} with parameter ${para} has been executed.
 
 Send Set Command To Group Devices
     [Arguments]    ${command}    ${para}    @{eids}
