@@ -9,11 +9,11 @@ ${FMS_URL}    http://mwlora-admin.test.freestyleiot.com
 ${COMMAND_INTERVAL}    1h
 
 @{YL_EIDS}    7ff9011020000080
-# ...               7ff9011020000082    not working.
+...               7ff9011020000082
 ...               7ff9011020000077
 ...               7ff9011020000076
-# ...               7ff9011020000075    not working.
-# ...               7ff9011020000074    not working.
+...               7ff9011020000075
+...               7ff9011020000074
 ...               7ff9011020000073
 ...               7ff9011020000072
 ...               7ff9011020000071
