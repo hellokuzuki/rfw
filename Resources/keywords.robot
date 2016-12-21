@@ -1,5 +1,9 @@
 *** Settings ***
 Library     Selenium2Library    implicit_wait=1
+Library     ../Resources/mylibs.py
+Library     OperatingSystem
+Library     DateTime
+Library     Collections
 Resource    variables.robot
 
 *** Keywords ***
@@ -40,6 +44,13 @@ FMS Login
     Click Login Button
     Wait for Login Process
     Log To Console    ${LOG_PREFIX} "FMS Login" has been executed.
+
+Go To Logs Page
+    Wait Until Element Is Visible    xpath=//li[contains(@class, "${LOGS}")]
+    Click Element    xpath=//li[contains(@class, "${LOGS}")]
+    Sleep    ${COMMAND_DELAY}
+    Log To Console    ${LOG_PREFIX} "Go To Logs Page" has been executed.
+
 
 Click Device EID
     [Arguments]    ${device_eid}
@@ -129,3 +140,75 @@ Send Set Command To Group Devices
     \    Click Send Button
     \    Click OK Button
     \    Log To Console    ${LOG_PREFIX} Send Set Command ${command} To Group Device to to ${eid} with parameter ${para} has been executed.
+
+# Group testing Keywords for MC NICs
+# Loop For Get Commands
+#     : FOR    ${COMMAND}    IN     @{MC_GET_COMMAND}
+#     \    Send Get Command To Group Devices    ${COMMAND}    @{MC_EIDS}
+#     \    Sleep    ${COMMAND_INTERVAL}
+
+# Group testing Keywords for YL NICs
+# Loop For Get Commands
+#     : FOR    ${COMMAND}    IN     @{YL_GET_COMMAND}
+#     \    Send Get Command To Group Devices    ${COMMAND}    @{YL_EIDS}
+#     \    Sleep    ${COMMAND_INTERVAL}
+
+Filter Records With EID
+    [Arguments]    ${eid}
+    Go To Logs Page
+    Wait Until Element Is Visible    rp
+    Select From List    rp    320
+    Wait Until Element Is Visible    xpath=//div[contains(@class, "${FIND_BTN}")]
+    Click Element    xpath=//div[contains(@class, "${FIND_BTN}")]
+    Wait Until Element Is Visible    qtype
+    Select From List    qtype    serial
+    Wait Until Element Is Visible    q
+    Input Text    q    ${eid}
+    Wait Until Element Is Visible    q
+    Press Key    q    \\13
+
+Create Transaction File
+    [Arguments]    ${eid}
+    ${date}    Get Current Date
+    ${datetime}    Convert Date    ${date}    datetime
+    Create File    ${EXECDIR}/${datetime.hour}H${datetime.minute}M-${datetime.day}-${datetime.month}-${datetime.year}-${eid}.txt    **** Collect Transaction Messages on ${eid} ****${\n}
+    ${OPT_FILE}    Convert To String    ${datetime.hour}H${datetime.minute}M-${datetime.day}-${datetime.month}-${datetime.year}-${eid}.txt
+    Set Global Variable    ${OPT_FILE}
+
+Create Transaction CSV
+    [Arguments]    ${eid}
+    ${date}    Get Current Date
+    ${datetime}    Convert Date    ${date}    datetime
+    Create File    ${EXECDIR}/${datetime.hour}H${datetime.minute}M-${datetime.day}-${datetime.month}-${datetime.year}-${eid}.csv
+    ${OPT_FILE}    Convert To String    ${datetime.hour}H${datetime.minute}M-${datetime.day}-${datetime.month}-${datetime.year}-${eid}.csv
+    Append Header To CSV    ${OPT_FILE}
+    Set Global Variable    ${OPT_FILE}
+
+Get Row Of Transaction
+    [Arguments]    ${index}
+    # Wait Until Element Is Visible    xpath=//table[contains(@class, "${LOGS_TABLE}")]
+    ${time}       Get Table Cell    flexi-logs    ${index}    2
+    Log to console    ${time}
+    ${command}    Get Table Cell    flexi-logs    ${index}    3
+    Log to console    ${command}
+    ${status}     Get Table Cell    flexi-logs    ${index}    4
+    Log to console    ${status}
+    ${device}     Get Table Cell    flexi-logs    ${index}    6
+    Log to console    ${device}
+    ${cid}        Get Table Cell    flexi-logs    ${index}    7
+    Log to console    ${cid}
+    ${data}       Get Table Cell    flexi-logs    ${index}    10
+    Log to console    ${data}
+    @{record}    Create List    ${EMPTY}
+    ${string}    Set Variable   ${EMPTY}
+    Append To List    ${record}    ${time}    ${command}    ${status}    ${device}    ${cid}    ${data}
+    ${string}    Catenate    @{record}
+    ${record_list}    Convert To List    ${record}
+    Append List To CSV    ${OPT_FILE}    ${record_list}
+
+Collect Data from CSV
+    [Arguments]    ${eid}    ${range}
+    Filter Records With EID    ${eid}
+    Create Transaction CSV    ${eid}
+    :For    ${x}    In Range    1    ${range}
+    \    Get Row Of Transaction    ${x}

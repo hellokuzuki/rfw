@@ -1,3 +1,6 @@
+*** Settings ***
+Resource    elements.robot
+
 *** Variables ***
 
 #Browser
@@ -16,20 +19,13 @@ ${LOG_PREFIX}             ********
 ${USERNAME}               freestyle
 ${PASSWORD}               freestyle
 
+#Report File
+${OPT_FILE}            ${EMPTY}
+# @{RECORD}              ${EMPTY}
 
 #FMS_URL
-${FMS_URL}                http://lora-admin.dev.freestyleiot.com/   # Dev Envionment
-#                         http://10.10.20.227:83                    # Mark's Testing Envionment
-
-#FMS Element - Command List Popup
-${EXECUTE_BUTTON}         Execute
-${SEND_BUTTON}            Send
-${OK_BUTTON}              Ok
-${CANCEL_BUTTON}          Cancel
-
-#FMS Page Element
-${LOGS}                   Logs
-${SIGNIN_BTN}             Sign in
+${FMS_URL}                http://lora-admin.dev.freestyleiot.com/       # Dev Envionment
+#                         http://mwlora-admin.test.freestyleiot.com/   # Mark's Testing Envionment
 
 #GATEWAY
 ${YL_GATEWAY}             99020000000026e2                          # Dev Gateway 1

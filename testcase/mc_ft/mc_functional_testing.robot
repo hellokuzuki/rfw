@@ -7,10 +7,9 @@ Suite Teardown    Close Browser
 *** Variables ***
 ${COMMAND_INTERVAL}    15m
 
-${EID}                 7ff9011110000003
+${EID}                   7ff9011110000009
 
 ${FMS_URL}             http:/mwlora-admin.test.freestyleiot.com
-
 
 *** Test Cases ***
 Validate GET_METER_TYPE Command
@@ -32,7 +31,7 @@ Validate GET_METER_CURRENT_PRESSURE Command
 Validate GET_METER_GAS_VALVE_STATE Command
     Send Get Command To Single Device    GET_METER_GAS_VALVE_STATE
     Sleep    ${COMMAND_INTERVAL}
-    Send Set Command To Single Device    SET_METER_GAS_VALVE_STATE    state=1
+    Send Set Command To Single Device    SET_METER_GAS_VALVE_STATE    valve_state=1
     Sleep    ${COMMAND_INTERVAL}
     Send Get Command To Single Device    GET_METER_GAS_VALVE_STATE
     Sleep    ${COMMAND_INTERVAL}
@@ -40,57 +39,58 @@ Validate GET_METER_GAS_VALVE_STATE Command
     # Sleep    ${COMMAND_INTERVAL}
 
 Validate GET_METER_SUMMATION_SCHEDULE Command
-    Send Get Command To Single Device    GET_METER_SUMMATION_SCHEDULE
+    Send Get Command To Single Device    GET_SUMMATION_REPORT_INTERVAL
     Sleep    ${COMMAND_INTERVAL}
-    Send Set Command To Single Device    SET_METER_SUMMATION_SCHEDULE    pressure_schedule=30
+    Send Set Command To Single Device    SET_SUMMATION_REPORT_INTERVAL    report_interval_mins=63
     Sleep    ${COMMAND_INTERVAL}
-    Send Get Command To Single Device    GET_METER_SUMMATION_SCHEDULE
+    Send Get Command To Single Device    GET_SUMMATION_REPORT_INTERVAL
     Sleep    ${COMMAND_INTERVAL}
 
-Validate GET_METER_PRESSURE_SCHEDULE Command
-    Send Get Command To Single Device    GET_METER_PRESSURE_SCHEDULE
-    Sleep    ${COMMAND_INTERVAL}
-    Send Set Command To Single Device    SET_METER_PRESSURE_SCHEDULE    pressure_schedule=30
-    Sleep    ${COMMAND_INTERVAL}
-    Send Get Command To Single Device    GET_METER_PRESSURE_SCHEDULE
-    Sleep    ${COMMAND_INTERVAL}
+# Validate GET_METER_BATTERY_LIFE Command
+#     Send Get Command To Single Device    GET_METER_BATTERY_LIFE
+#     Sleep    ${COMMAND_INTERVAL}
+
 
 Validate GET_MC_METER_READING_VALUE Command
-    Send Get Command To Single Device    GET_MC_METER_READING_VALUE
+    Send Get Command To Single Device    GET_METER_READING_VALUE
     Sleep    ${COMMAND_INTERVAL}
-    Send Set Command To Single Device    SET_MC_METER_READING_VALUE    value=30
+    Send Set Command To Single Device    SET_METER_READING_VALUE    reading_value=188888
     Sleep    ${COMMAND_INTERVAL}
-    Send Get Command To Single Device    GET_MC_METER_READING_VALUE
-    Sleep    ${COMMAND_INTERVAL}
-
-Validate GET_MC_METER_STATUS Command
-    Send Get Command To Single Device    GET_MC_METER_STATUS
-    Sleep    ${COMMAND_INTERVAL}
-    Send Set Command To Single Device    SET_MC_METER_STATUS    location=0,value=0
-    Sleep    ${COMMAND_INTERVAL}
-    Send Get Command To Single Device    GET_MC_METER_STATUS
+    Send Get Command To Single Device    GET_METER_READING_VALUE
     Sleep    ${COMMAND_INTERVAL}
 
-Validate GET_MC_METER_CUSTOMER_ID Command
-    Send Get Command To Single Device    GET_MC_METER_CUSTOMER_ID
+Validate GET_METER_STATUS Command
+    Send Get Command To Single Device    GET_METER_STATUS
     Sleep    ${COMMAND_INTERVAL}
-    Send Set Command To Single Device    SET_MC_METER_CUSTOMER_ID    id=01600000010272
+    # Send Set Command To Single Device    SET_MC_METER_STATUS    location=0,value=0
+    # Sleep    ${COMMAND_INTERVAL}
+    # Send Get Command To Single Device    GET_MC_METER_STATUS
+    # Sleep    ${COMMAND_INTERVAL}
+
+Validate GET_METER_CUSTOMERID Command
+    Send Get Command To Single Device    GET_METER_CUSTOMERID
     Sleep    ${COMMAND_INTERVAL}
-    Send Get Command To Single Device    GET_MC_METER_CUSTOMER_ID
+    Send Set Command To Single Device    SET_METER_CUSTOMERID    customer_id=01600000010272
+    Sleep    ${COMMAND_INTERVAL}
+    Send Get Command To Single Device    GET_METER_CUSTOMERID
     Sleep    ${COMMAND_INTERVAL}
 
-Validate GET_MC_METER_TIME Command
-    Send Get Command To Single Device    GET_MC_METER_TIME
+Validate GET_METER_TIME Command
+    Send Get Command To Single Device    GET_METER_TIME
     Sleep    ${COMMAND_INTERVAL}
-    Send Set Command To Single Device    SET_MC_METER_TIME    time=1479503822
+    Send Set Command To Single Device    SET_METER_TIME    time=1479503888
     Sleep    ${COMMAND_INTERVAL}
-    Send Get Command To Single Device    GET_MC_METER_TIME
-    Sleep    ${COMMAND_INTERVAL}
-
-Validate SET_MC_CONFIG_CENTER_SHUTDOWN Command
-    Send Get Command To Single Device    SET_MC_CONFIG_CENTER_SHUTDOWN
+    Send Get Command To Single Device    GET_METER_TIME
     Sleep    ${COMMAND_INTERVAL}
 
-Validate SET_MC_CONFIG_DISABLE_CENTER_SHUTDOWN Command
-    Send Get Command To Single Device    SET_MC_CONFIG_DISABLE_CENTER_SHUTDOWN
+Validate SET_CONFIG_CENTER_SHUTDOWN Command
+    Send Get Command To Single Device    SET_CONFIG_CENTER_SHUTDOWN
+    Sleep    ${COMMAND_INTERVAL}
+
+Validate SET_CONFIG_DISABLE_CENTER_SHUTDOWN Command
+    Send Get Command To Single Device    SET_CONFIG_DISABLE_CENTER_SHUTDOWN
+    Sleep    ${COMMAND_INTERVAL}
+
+Validate GET_PROTOCOL_VERSION Command
+    Send Get Command To Single Device    GET_PROTOCOL_VERSION
     Sleep    ${COMMAND_INTERVAL}
