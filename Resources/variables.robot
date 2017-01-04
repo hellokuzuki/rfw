@@ -27,10 +27,12 @@ ${OPT_FILE}            ${EMPTY}
 ${FMS_URL}                http://lora-admin.dev.freestyleiot.com/       # Dev Envionment
 #                         http://mwlora-admin.test.freestyleiot.com/   # Mark's Testing Envionment
 
+${GCID}                 ${EMPTY}
+
 #GATEWAY
 ${YL_GATEWAY}             99020000000026e2                          # Dev Gateway 1
 ${MC_GATEWAY}             99020000000026e3                          # Dev Gateway 2
-${TEST_GATEWAY}           990200000000269b                          # Mark's testing gateway
+${GATEWAY}                990200000000269b                          # Mark's testing gateway
 
 @{YL_EIDS_ALL}    7ff9011020000077    7ff9011020000080    7ff9011020000082
 ...               7ff9011020000076    7ff9011020000075    7ff9011020000074

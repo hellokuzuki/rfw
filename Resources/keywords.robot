@@ -45,12 +45,18 @@ FMS Login
     Wait for Login Process
     Log To Console    ${LOG_PREFIX} "FMS Login" has been executed.
 
+Go To Main Page
+    Wait Until Element Is Visible    xpath=//li[contains(@class, "${MAIN}")]
+    Click Element    xpath=//li[contains(@class, "${MAIN}")]
+    Sleep    ${COMMAND_DELAY}
+    Select GateWay    ${GATEWAY}
+    Log To Console    ${LOG_PREFIX} "Go To Main Page" has been executed.
+
 Go To Logs Page
     Wait Until Element Is Visible    xpath=//li[contains(@class, "${LOGS}")]
     Click Element    xpath=//li[contains(@class, "${LOGS}")]
     Sleep    ${COMMAND_DELAY}
     Log To Console    ${LOG_PREFIX} "Go To Logs Page" has been executed.
-
 
 Click Device EID
     [Arguments]    ${device_eid}
@@ -64,6 +70,13 @@ Click Execute Button
     Click Element    xpath=//span[contains(text(), "${EXECUTE_BUTTON}")]
     Sleep    ${COMMAND_DELAY}
     # Log To Console    ${LOG_PREFIX} "Click Execute Button" has been executed.
+
+Input Device ID
+    [Arguments]    ${eid}
+    Wait Until Element Is Visible    xpath=//div[contains(@id,"execute-popup")]//input[contains(@id, "eid")]
+    Input Text    xpath=//div[contains(@id,"execute-popup")]//input[contains(@id, "eid")]    ${eid}
+    Sleep    ${COMMAND_DELAY}
+    Log To Console    ${LOG_PREFIX} "IInput Device ID" ${eid} has been executed.
 
 Input Command
     [Arguments]    ${command}
@@ -100,6 +113,7 @@ Click Cancel Button
 Send Get Command To Single Device
     [Arguments]    ${command}
     Log To Console    ${LOG_PREFIX} Send Get Command ${command} To Single Device ${EID} started.
+    Validate Location
     Click Device EID    ${EID}
     Click Execute Button
     Input Command    ${command}
@@ -121,6 +135,7 @@ Send Get Command To Group Devices
 Send Set Command To Single Device
     [Arguments]    ${command}    ${para}
     Log To Console    ${LOG_PREFIX} Send Set Command ${command} To Single Device to ${EID} with parameter ${para} started.
+    Validate Location
     Click Device EID    ${EID}
     Click Execute Button
     Input Command    ${command}
@@ -187,17 +202,17 @@ Create Transaction CSV
 Get Row Of Transaction
     [Arguments]    ${index}
     # Wait Until Element Is Visible    xpath=//table[contains(@class, "${LOGS_TABLE}")]
-    ${time}       Get Table Cell    flexi-logs    ${index}    2
+    ${time}       Get Table Cell    ${LOGS_TABLE}    ${index}    2
     Log to console    ${time}
-    ${command}    Get Table Cell    flexi-logs    ${index}    3
+    ${command}    Get Table Cell    ${LOGS_TABLE}    ${index}    3
     Log to console    ${command}
-    ${status}     Get Table Cell    flexi-logs    ${index}    4
+    ${status}     Get Table Cell    ${LOGS_TABLE}    ${index}    4
     Log to console    ${status}
-    ${device}     Get Table Cell    flexi-logs    ${index}    6
+    ${device}     Get Table Cell    ${LOGS_TABLE}    ${index}    6
     Log to console    ${device}
-    ${cid}        Get Table Cell    flexi-logs    ${index}    7
+    ${cid}        Get Table Cell    ${LOGS_TABLE}    ${index}    7
     Log to console    ${cid}
-    ${data}       Get Table Cell    flexi-logs    ${index}    10
+    ${data}       Get Table Cell    ${LOGS_TABLE}    ${index}    10
     Log to console    ${data}
     @{record}    Create List    ${EMPTY}
     ${string}    Set Variable   ${EMPTY}
@@ -212,3 +227,63 @@ Collect Data from CSV
     Create Transaction CSV    ${eid}
     :For    ${x}    In Range    1    ${range}
     \    Get Row Of Transaction    ${x}
+
+Send Command and Validate
+    [Arguments]    ${eid}    ${cmd}    ${para}=${EMPTY}
+    Send Set Command To Single Device    ${cmd}    ${para}
+    Validate Request Info    ${eid}    ${cmd}
+    Validate Response Info    ${eid}    ${cmd}
+
+Validate Request Info
+    [Arguments]    ${eid}    ${cmd}
+    Filter Records With EID    ${eid}
+    Sleep    3s
+    : For    ${index}    In Range      1     5
+    \    ${command}    Get Table Cell    ${LOGS_TABLE}    ${index}    3
+    \    Log to console    ${command}
+    \    Continue For Loop If    '${command}' != '${cmd}'
+    \    ${status}     Get Table Cell    ${LOGS_TABLE}    ${index}    4
+    \    Log to console    ${status}
+    \    Continue For Loop If    '${status}' != '${STATUS_REQ}'
+    \    ${device}     Get Table Cell    ${LOGS_TABLE}    ${index}    6
+    \    Log to console    ${device}
+    \    Continue For Loop If    '${device}' != '${eid}'
+    \    ${cid}        Get Table Cell    ${LOGS_TABLE}    ${index}    7
+    \    Log to console    ${cid}
+    \    ${GCID}    Set Variable    ${cid}
+    \    Set Global Variable    ${GCID}
+    \    Exit For Loop If    '${cid}' != 0
+
+Validate Response Info
+    [Arguments]    ${eid}    ${cmd}
+    Log to console    Validate Response InfoCID ${GCID}
+    :For    ${index}    In Range    1     15
+    \    ${ret}    Get Response Info   ${eid}    ${cmd}
+    \    Exit For Loop If    '${ret}' == 'GOT'
+    \    Sleep    1m
+    \    Click on refresh button
+
+Get Response Info
+    [Arguments]    ${eid}    ${cmd}
+    Log to console    Get Response InfoCID ${GCID}
+    : For    ${index}    In Range      1     3
+    \    ${status}     Get Table Cell    ${LOGS_TABLE}    ${index}    4
+    \    Continue For Loop If    '${status}' != '${STATUS_RES}'
+    \    ${cid}        Get Table Cell    ${LOGS_TABLE}    ${index}    7
+    \    ${data}    Run Keyword If    '${cid}' == '${GCID}'    Get Table Cell    ${LOGS_TABLE}    ${index}    10
+    \    Run Keyword If    '${cid}' == '${GCID}'    Validate MC GET_METER_TYPE Response    ${data}
+    \    Run Keyword If    '${cid}' == '${GCID}'    Return From Keyword    GOT
+
+Click on refresh button
+    Wait Until Element Is Visible    xpath=//div[contains(@class, "${RFS_ICON}")]
+    Click Element    xpath=//div[contains(@class, "${RFS_ICON}")]
+
+Validate MC GET_METER_TYPE Response
+    [Arguments]    ${input}
+    Should Contain    ${input}    MP_STATUS_SUCCESS    MC GET_METER_TYPE contains "error_details":"MP_STATUS_SUCCESS\u0000"
+    Should Contain    ${input}    manufacturer    MC GET_METER_TYPE contains "manufacturer":"Micom"
+    Should Contain    ${input}    model_id    MC GET_METER_TYPE contains "model_id"
+
+Validate Location
+    ${location}    Get Location
+    Run Keyword If    'logs' in "${location}"    Go To Main Page

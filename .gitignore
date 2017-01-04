@@ -3,5 +3,4 @@
 *.html
 *.log
 /testcase/playground
-/testcase/
 *.png
