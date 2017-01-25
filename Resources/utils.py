@@ -18,10 +18,3 @@ def append_header_to_csv(path):
 	with open(path, 'a') as fp:
 		wr = csv.writer(fp, dialect='excel')
 		wr.writerow(header)
-
-def various_args(*varargs):
-
-    for value in varargs:
-        print 'vararg:', value
-
-

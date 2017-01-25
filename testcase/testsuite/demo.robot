@@ -38,10 +38,7 @@
 #     Allo       Ha
 
 Demo1
-    [template]    Example for embeded ${first} add ${second} equals
-    hello    World
-    Nothing    Possible
-    Allo       Ha
+    log to console    ******  ${OUTPUTDIR}
 
 
 *** Keywords ***
