@@ -40,10 +40,25 @@ Demo1
     # Send Out Command To Multiple EIDs    GET_OFLOW_DETECT_RATE    ${EMPTY}    7ff9011110000004
     # Wait And Validate Response Of Command    GET_OFLOW_DETECT_RATE    7ff9011110000004    overflow_detect_flowrate=43
 
-    Send Out Command To Multiple EIDs    SET_PRESSURE_ALARM_LEVEL_LOW    pressure_alarm_level_high=3    7ff9011110000004
-    Wait And Validate Response Of Command    SET_PRESSURE_ALARM_LEVEL_LOW    7ff9011110000004
-    Send Out Command To Multiple EIDs    GET_PRESSURE_ALARM_LEVEL_LOW    ${EMPTY}    7ff9011110000004
-    Wait And Validate Response Of Command    GET_PRESSURE_ALARM_LEVEL_LOW    7ff9011110000004    pressure_alarm_level_high=3
+    # Send Out Command To Multiple EIDs    SET_PRESSURE_ALARM_LEVEL_LOW    pressure_alarm_level_high=3    7ff9011110000004
+    # Wait And Validate Response Of Command    SET_PRESSURE_ALARM_LEVEL_LOW    7ff9011110000004
+    # Send Out Command To Multiple EIDs    GET_PRESSURE_ALARM_LEVEL_LOW    ${EMPTY}    7ff9011110000004
+    # Wait And Validate Response Of Command    GET_PRESSURE_ALARM_LEVEL_LOW    7ff9011110000004    pressure_alarm_level_high=3
+
+    # Send Out Command To Multiple EIDs    SET_PRESSURE_ALARM_LEVEL_HIGH    pressure_alarm_level_high=4    7ff9011110000004
+    # Wait And Validate Response Of Command    SET_PRESSURE_ALARM_LEVEL_HIGH    7ff9011110000004
+    # Send Out Command To Multiple EIDs    GET_PRESSURE_ALARM_LEVEL_HIGH    ${EMPTY}    7ff9011110000004
+    # Wait And Validate Response Of Command    GET_PRESSURE_ALARM_LEVEL_HIGH    7ff9011110000004    pressure_alarm_level_high=4
+
+    # Send Out Command To Multiple EIDs    SET_LEAK_DETECT_RANGE    leak_detect_range=8    7ff9011110000004
+    # Wait And Validate Response Of Command    SET_LEAK_DETECT_RANGE    7ff9011110000004
+    # Send Out Command To Multiple EIDs    GET_LEAK_DETECT_RANGE    ${EMPTY}    7ff9011110000004
+    # Wait And Validate Response Of Command    GET_LEAK_DETECT_RANGE    7ff9011110000004    leak_detect_range=8
+
+    Send Out Command To Multiple EIDs    SET_MANUAL_RECOVER_ENABLE    validate_get_manual_recover_enable=1    7ff9011110000004
+    Wait And Validate Response Of Command    SET_MANUAL_RECOVER_ENABLE    7ff9011110000004
+    Send Out Command To Multiple EIDs    GET_MANUAL_RECOVER_ENABLE    ${EMPTY}    7ff9011110000004
+    Wait And Validate Response Of Command    GET_MANUAL_RECOVER_ENABLE    7ff9011110000004    validate_get_manual_recover_enable=1
 
 
 *** Keywords ***

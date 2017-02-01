@@ -12,12 +12,12 @@ def validate_command(data_obj, command, state=None):
 	else:
 		state = None
 
-	BuiltIn().log_to_console(type(data_obj))
-	BuiltIn().log_to_console(type(command))
-	BuiltIn().log_to_console(type(state))
-	BuiltIn().log_to_console(data_obj)
-	BuiltIn().log_to_console(command)
-	BuiltIn().log_to_console(state)
+	# BuiltIn().log_to_console(type(data_obj))
+	# BuiltIn().log_to_console(type(command))
+	# BuiltIn().log_to_console(type(state))
+	# BuiltIn().log_to_console(data_obj)
+	# BuiltIn().log_to_console(command)
+	# BuiltIn().log_to_console(state)
 
 	if command == 'GET_METER_TYPE':
 		status = validate_get_meter_type(data)
@@ -465,11 +465,112 @@ def validate_get_pressure_alarm_level_low(response, state):
 			if response['pressure_alarm_level_low'] != 5:
 				BuiltIn().log("pressure_alarm_level_low should return maximum value(5)!", "ERROR")
 				return False
-			elif response['pressure_alarm_level_low'] == int(state):
-				BuiltIn().log("Validation Successful.", "INFO")
-				return True	
+		elif int(response['pressure_alarm_level_low']) == int(state):
+			BuiltIn().log("Validation Successful.", "INFO")
+			return True	
 		else:
 			BuiltIn().log("Unexpected condition!.", "WARN")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
+def validate_get_pressure_alarm_level_high(response, state):
+
+	print 'state = ' + str(state)
+	print 'result_code = ' + str(response['result_code'])
+	print 'pressure_alarm_level_high = ' + str(response['pressure_alarm_level_high'])
+
+	if 	(
+			'result_code' not in response or
+			'pressure_alarm_level_high' not in response
+		):
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		elif state is None:
+			BuiltIn().log("pressure_alarm_level_high was not validated.", "INFO")
+			return True
+		elif int(state) > 5:
+			if response['pressure_alarm_level_high'] != 5:
+				BuiltIn().log("pressure_alarm_level_high should return maximum value(5)!", "ERROR")
+				return False
+		elif int(response['pressure_alarm_level_high']) == int(state):
+			BuiltIn().log("Validation Successful.", "INFO")
+			return True	
+		else:
+			BuiltIn().log("Unexpected condition!.", "WARN")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
+def validate_get_leak_detect_range(response, state):
+
+	print 'state = ' + str(state)
+	print 'result_code = ' + str(response['result_code'])
+	print 'leak_detect_range = ' + str(response['leak_detect_range'])
+
+	if 	(
+			'result_code' not in response or
+			'leak_detect_range' not in response
+		):
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		elif state is None:
+			BuiltIn().log("leak_detect_range was not validated.", "INFO")
+			return True
+		elif int(state) > 9:
+			if response['leak_detect_range'] != 9:
+				BuiltIn().log("leak_detect_range should return maximum value(9)!", "ERROR")
+				return False
+		elif int(response['leak_detect_range']) == int(state):
+			BuiltIn().log("Validation Successful.", "INFO")
+			return True	
+		else:
+			BuiltIn().log("Unexpected condition!.", "WARN")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
+def validate_get_manual_recover_enable(response, state):
+	
+	print 'state = ' + str(state)
+	print 'result_code = ' + str(response['result_code'])
+	print 'manual_recover_enable = ' + str(response['manual_recover_enable'])
+	
+	if 	(
+			'result_code' not in response or
+			'manual_recover_enable' not in response
+		):
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		elif state is None:
+			BuiltIn().log("manual_recover_enable stats was not validated.", "INFO")
+			return True
+		elif int(state) == 1 and response['manual_recover_enable'] != 1:
+			BuiltIn().log("Valve state should return 1, But 0 has been returned!", "ERROR")
+			return False
+		elif int(state) == 0 and response['manual_recover_enable'] != 0:
+			BuiltIn().log("Valve state should return 0, But 1 has been returned!", "ERROR")
+			return False
+		elif response['manual_recover_enable'] > 1:
+			BuiltIn().log("Valve state greater than 1!", "ERROR")
+			return False
+		else:
+			BuiltIn().log("Validation Successful.", "INFO")
 			return True
 	else:
 		BuiltIn().log("Response contains incorrect value!", "ERROR")
