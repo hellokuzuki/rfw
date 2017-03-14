@@ -20,7 +20,7 @@ Run Test Suite Teardown Process
     Log to console    ${date}
     ${date}    Convert Date    ${date}    datetime
     ${date}    Set Variable    ${date.minute}m-${date.hour}h-${date.day}D-${date.month}M-${date.year}Y
-    Create Directory    ${EXECDIR}/Results/${date}
+    # Create Directory    ${EXECDIR}/Results/${date}
     # Copy Files    ${EXECDIR}/*.html    ${EXECDIR}/*.xml    ${EXECDIR}/Results/${date}
     Log    *************** Test Suite Teardown process completed. ***************
 
