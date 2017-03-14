@@ -3,8 +3,10 @@ Resource    ../../Resources/variables.robot
 Resource    ../../Resources/keywords.robot
 Library     ../../Resources/validationLib.py
 *** Variables ***
-@{test}      7ff9011110000004    7ff9011110000009     7ff9010926000001
-
+@{ylnics}    7ff9011202000004    7ff9011202000005    7ff9011202000006    7ff9011202000007    7ff9011202000012
+...          7ff9011202000013    7ff9011202000014    7ff9011202000015    7ff9011202000016    7ff9011202000017
+#...              7ff9011202000009    7ff9010926000013    7ff9011202000018    7ff9011202000019    7ff9011202000020
+@{mcnics}        7ff9011202000009    7ff9011202000018    7ff9011202000019
 *** Test Cases ***
 # Demo
 #     Select GateWay      990200000000269b
@@ -14,13 +16,37 @@ Library     ../../Resources/validationLib.py
 #     Wait And Validate Response Of Command    GET_METER_SUMMATION_DELIVERED    7ff9011110000004
 
 Demo1
-    Select GateWay     99020000000026e2
-    : For    ${index}    In Range    1    10000
+    Select GateWay       990200000000269f
     # \     Send Out Command To Multiple EIDs    GET_METER_SHUTOFF_CODES    ${EMPTY}    7ff9011202000006
-    \     Send Out Command To Multiple EIDs    GET_METER_SUMMATION_DELIVERED    ${EMPTY}    7ff9011110000015
-    \     Send Out Command To Multiple EIDs    GET_METER_CURRENT_PRESSURE    ${EMPTY}    7ff9011110000015
-    \     log to console     ${index}
-    \     Sleep     10m
+    Send Out Command To Multiple EIDs    GET_METER_SUMMATION_DELIVERED      ${EMPTY}    @{ylnics}
+    Send Out Command To Multiple EIDs    GET_METER_SUMMATION_DELIVERED      ${EMPTY}    @{mcnics}
+    # : For    ${index}    In Range    1    10000
+    # \    Send Out Command To Multiple EIDs    GET_METER_SERIAL_NUMBER      ${EMPTY}    @{ylnics}
+    # \    Send Out Command To Multiple EIDs    GET_METER_CUSTOMERID      ${EMPTY}    @{mcnics}
+    # \    Sleep     10m
+    # \    Send Out Command To Multiple EIDs    SET_METER_SERIAL_NUMBER    meter_serial_number=qqqqqwwwww      @{ylnics}
+    # \    Send Out Command To Multiple EIDs    SET_METER_CUSTOMERID    customer_id=99999998888888      @{mcnics}
+    # \    Sleep     10m
+    # \    Send Out Command To Multiple EIDs    GET_METER_SERIAL_NUMBER      ${EMPTY}    @{ylnics}
+    # \    Send Out Command To Multiple EIDs    GET_METER_CUSTOMERID      ${EMPTY}    @{mcnics}
+    # \    Sleep     10m
+    # \    Send Out Command To Multiple EIDs    SET_METER_SERIAL_NUMBER    meter_serial_number=eeeeerrrrr      @{ylnics}
+    # \    Send Out Command To Multiple EIDs    SET_METER_CUSTOMERID    customer_id=88888887777777      @{mcnics}
+    # \    Sleep     10m
+    # \    Send Out Command To Multiple EIDs    GET_METER_SERIAL_NUMBER     ${EMPTY}     @{ylnics}
+    # \    Send Out Command To Multiple EIDs    GET_METER_CUSTOMERID      ${EMPTY}    @{mcnics}
+    # \    Sleep     10m
+    # \    Send Out Command To Multiple EIDs    SET_METER_SERIAL_NUMBER    meter_serial_number=rrrrrttttt      @{ylnics}
+    # \    Send Out Command To Multiple EIDs    SET_METER_CUSTOMERID    customer_id=77777776666666      @{mcnics}
+    # \    Sleep     10m
+
+
+
+
+
+
+
+
 
 
 

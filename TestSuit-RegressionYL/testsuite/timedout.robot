@@ -3,7 +3,8 @@ Resource    ../../Resources/variables.robot
 Resource    ../../Resources/keywords.robot
 Library     ../../Resources/validationLib.py
 *** Variables ***
-@{test}      7ff9011110000004    7ff9011110000009     7ff9010926000001
+@{test}          7ff9011202000001    7ff9011202000004     7ff9011202000005    7ff9011202000006    7ff9011202000007
+...              7ff9011202000012    7ff9011202000013     7ff9011202000014    7ff9011202000015    7ff9011202000016    7ff9011202000017
 
 *** Test Cases ***
 # Demo
@@ -16,11 +17,72 @@ Library     ../../Resources/validationLib.py
 Demo1
     Select GateWay     99020000000026e2
     : For    ${index}    In Range    1    10000
-    # \     Send Out Command To Multiple EIDs    GET_METER_SHUTOFF_CODES    ${EMPTY}    7ff9011202000006
-    \     Send Out Command To Multiple EIDs    GET_METER_SUMMATION_DELIVERED    ${EMPTY}    7ff9011110000015
-    \     Send Out Command To Multiple EIDs    GET_METER_CURRENT_PRESSURE    ${EMPTY}    7ff9011110000015
-    \     log to console     ${index}
+    \     Send Out Command To Multiple EIDs    GET_SUMMATION_REPORT_INTERVAL    ${EMPTY}    @{test}
     \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    SET_SUMMATION_REPORT_INTERVAL    report_interval_mins=1440    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_SUMMATION_REPORT_INTERVAL    ${EMPTY}    @{test}
+    \     Sleep     10m
+    # \     Send Out Command To Multiple EIDs    GET_PRESSURE_REPORT_INTERVAL    ${EMPTY}    @{test}
+    # \     Sleep 10m
+    \     Send Out Command To Multiple EIDs    SET_PRESSURE_REPORT_INTERVAL    report_interval_mins=1440    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_PRESSURE_REPORT_INTERVAL    ${EMPTY}    @{test}
+    \     Sleep     10m
+
+
+    \     Send Out Command To Multiple EIDs    SET_OFLOW_DETECT_ENABLE    overflow_detect_enable=0    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_OFLOW_DETECT_ENABLE    ${EMPTY}    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    SET_OFLOW_DETECT_ENABLE    overflow_detect_enable=1    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_OFLOW_DETECT_ENABLE    ${EMPTY}    @{test}
+    \     Sleep     10m
+    # \     Send Out Command To Multiple EIDs    GET_OFLOW_DETECT_DURATION    ${EMPTY}    @{test}
+    # \     Sleep 10m
+    \     Send Out Command To Multiple EIDs    SET_OFLOW_DETECT_DURATION    overflow_detect_duration=5    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_OFLOW_DETECT_DURATION    ${EMPTY}    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    SET_OFLOW_DETECT_DURATION    overflow_detect_duration=999    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_OFLOW_DETECT_DURATION    ${EMPTY}    @{test}
+    \     Sleep     10m
+    # \     Send Out Command To Multiple EIDs    GET_OFLOW_DETECT_RATE    ${EMPTY}    @{test}
+    # \     Sleep 10m
+    \     Send Out Command To Multiple EIDs    SET_OFLOW_DETECT_RATE    overflow_detect_flowrate=13    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_OFLOW_DETECT_RATE    ${EMPTY}    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    SET_OFLOW_DETECT_RATE    overflow_detect_flowrate=40    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_OFLOW_DETECT_RATE    ${EMPTY}    @{test}
+    \     Sleep     10m
+    # \     Send Out Command To Multiple EIDs    GET_PRESSURE_ALARM_LEVEL_LOW    ${EMPTY}    @{test}
+    # \     Sleep 10m
+    \     Send Out Command To Multiple EIDs    SET_PRESSURE_ALARM_LEVEL_LOW    pressure_alarm_level_low=0    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_PRESSURE_ALARM_LEVEL_LOW    ${EMPTY}    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    SET_PRESSURE_ALARM_LEVEL_LOW    pressure_alarm_level_low=5    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_PRESSURE_ALARM_LEVEL_LOW    ${EMPTY}    @{test}
+    \     Sleep     10m
+
+    \     Send Out Command To Multiple EIDs    SET_MANUAL_RECOVER_ENABLE    manual_recover_enable=0    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_MANUAL_RECOVER_ENABLE    ${EMPTY}    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    SET_MANUAL_RECOVER_ENABLE    manual_recover_enable=1    @{test}
+    \     Sleep     10m
+    \     Send Out Command To Multiple EIDs    GET_MANUAL_RECOVER_ENABLE    ${EMPTY}    @{test}
+    \     Sleep     10m
+
+
+    # \     Send Out Command To Multiple EIDs    GET_METER_CURRENT_PRESSURE    ${EMPTY}    @{test}
+    \     log to console     ${index}
+    # \     Sleep     2h
 
 
 

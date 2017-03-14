@@ -18,7 +18,7 @@ Metadata            Admin GUI URL          *&{Metadata}[FMS_URL]*
                     #http://lora-yl-admin.cloud.freestyleiot.com/  # Taiwan Production Switch
 
 ############ Environment Information    ############
-${FMS_URL}          http://lora-admin.dev.freestyleiot.com/  #http://mwlora-admin.test.freestyleiot.com/     # Mark's Testing Switch
+${FMS_URL}          http://10.10.10.125:83  #http://mwlora-admin.test.freestyleiot.com/     # Mark's Testing Switch
 ${USERNAME}         freestyle
 ${PASSWORD}         freestyle
 

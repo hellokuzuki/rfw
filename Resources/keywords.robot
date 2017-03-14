@@ -1,5 +1,5 @@
 *** Settings ***
-Library     Selenium2Library    implicit_wait=10
+Library     Selenium2Library    implicit_wait=3
 Library     ../Resources/validationLib.py
 Library     OperatingSystem
 Library     DateTime
