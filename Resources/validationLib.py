@@ -2,13 +2,21 @@ import sys
 import json
 from robot.libraries.BuiltIn import BuiltIn
 
+def unicode_to_str(data_obj):
+	str_data = data_obj.encode('utf-8')
+	json_res = json.loads(str_data)
+	return json_res
+
 def validate_command(data_obj, command, state=None):
 	data = unicode_to_str(data_obj)
 
 	if state is not None and state != "":
 		state = str(state)
-		if '=' in state:
+		if state.count("=") == 1:
+			# if '=' in state:
 			state = state.rsplit('=', 1)[1]
+		if state.count("=") > 1:
+			state = state.split(",")
 	else:
 		state = None
 
@@ -28,7 +36,7 @@ def validate_command(data_obj, command, state=None):
 	elif command == 'GET_METER_GAS_VALVE_STATE':
 		status = validate_get_meter_gas_valve_state(data, state)
 	elif command == 'SET_METER_GAS_VALVE_STATE':
-		status = validate_reponse_of_set_command(data)
+		status = validate_reponse_of_set_valve_command(data)
 	elif command == 'GET_SUMMATION_REPORT_INTERVAL':
 		status = validate_get_report_interval(data, state)
 	elif command == 'SET_SUMMATION_REPORT_INTERVAL':
@@ -68,31 +76,31 @@ def validate_command(data_obj, command, state=None):
 	elif command == 'SET_MANUAL_RECOVER_ENABLE':
 		status = validate_reponse_of_set_command(data)
 	elif command == 'GET_METER_FIRMWARE_VERSION':
-		status = validate_get_meter_firmware_version(data, state)
+		status = validate_get_meter_firmware_version(data)
 	elif command == 'GET_METER_SHUTOFF_CODES':
-		status = validate_get_meter_shutoff_codes(data, state)
+		status = validate_get_meter_shutoff_codes(data)
 	elif command == 'GET_METER_SERIAL_NUMBER':
 		status = validate_get_meter_serial_number(data, state)
 	elif command == 'SET_METER_SERIAL_NUMBER':
 		status = validate_reponse_of_set_command(data)
 	elif command == 'GET_ELECTRIC_QNT_VALUE':
-		status = validate_get_electric_qnt_value(data, state)
+		status = validate_get_electric_qnt_value(data)
 	elif command == 'GET_COMMS_MODE':	
 		status = validate_get_comms_mode(data, state)
 	elif command == 'SET_COMMS_MODE':
 		status = validate_reponse_of_set_command(data)
 	elif command == 'GET_PILOT_LIGHT_MODE':
-		status = validate_get_comms_mode(data, state)
+		status = validate_get_pilot_light_mode_command(data, state)
 	elif command == 'SET_PILOT_LIGHT_MODE':
+		status = validate_reponse_of_set_command(data)
+	elif command == 'GET_EARTHQUAKE_SENSOR_STATE':
+		status = validate_get_earthquake_sensor_state(data, state)
+	elif command == 'SET_EARTHQUAKE_SENSOR_STATE':
 		status = validate_reponse_of_set_command(data)
 	else:
 		status = validate_get_meter_type(data)
 	return status
 
-def unicode_to_str(data_obj):
-	str_data = data_obj.encode('utf-8')
-	json_res = json.loads(str_data)
-	return json_res
 
 def validate_get_meter_type(response):
 
@@ -187,10 +195,7 @@ def validate_get_meter_gas_valve_state(response, state):
 		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
 		return False
 	elif response['result_code'] < 10:
-		if response['result_code'] == 7:
-			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
-			return True
-		elif state is None:
+		if state is None:
 			BuiltIn().log("Valve stats was not validated.", "INFO")
 			return True
 		elif int(state) == 1 and response['valve_state'] != 1:
@@ -202,8 +207,33 @@ def validate_get_meter_gas_valve_state(response, state):
 		elif response['valve_state'] > 1:
 			BuiltIn().log("Valve state greater than 1!", "ERROR")
 			return False
+		elif response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
 		else:
 			BuiltIn().log("Validation Successful.", "INFO")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
+def validate_reponse_of_set_valve_command(response):
+	print 'result_code = ' + str(response['result_code']) + '\n'
+	if 'result_code' not in response:
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if response['result_code'] == 0:
+			BuiltIn().log("Valve stats has been set correctly.", "INFO")
+			return True
+		elif response['result_code'] == 1:
+			BuiltIn().log("MP_STATUS_FAILURE has been returned.", "INFO")
+			return True
+		elif response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		else:
+			BuiltIn().log("Unknown result code has been returned.", "WARN")
 			return True
 	else:
 		BuiltIn().log("Response contains incorrect value!", "ERROR")
@@ -275,7 +305,7 @@ def validate_reponse_of_set_report_interval_command(response, state):
 				BuiltIn().log("Incorrect response has been returned", "ERROR")
 				return False
 		else:
-			BuiltIn().log("Unknow result code has been returned.", "WARN")
+			BuiltIn().log("Unknown result code has been returned.", "WARN")
 			return True
 	else:
 		BuiltIn().log("Response contains incorrect value!", "ERROR")
@@ -283,17 +313,8 @@ def validate_reponse_of_set_report_interval_command(response, state):
 
 def validate_get_meter_version_command(response, state):
 
-	print 'state = ' + str(state)
-	print 'result_code = ' + str(response['result_code'])
-	print 'nic_application_version = ' + str(response['nic_application_version'])
-	print 'nic_bootloader_version = ' + str(response['nic_bootloader_version'])
-
-	state = state.replace('.', '')
-	state = state.replace('-', '')
-	response['nic_application_version'] = state.replace('.', '')
-	response['nic_application_version'] = state.replace('-', '')
-	response['nic_bootloader_version'] = state.replace('.', '')
-	response['nic_bootloader_version'] = state.replace('-', '')
+	app_version = str(response['nic_application_version'])[:-1]
+	boot_version = str(response['nic_bootloader_version'])[:-1]
 
 	if 	(
 			'result_code' not in response or
@@ -309,10 +330,10 @@ def validate_get_meter_version_command(response, state):
 		elif state is None:
 			BuiltIn().log("Meter Version was not validated.", "INFO")
 			return True
-		elif str(state) != str(response['nic_application_version']):
+		elif str(state) !=  app_version: #str(response['nic_application_version']):
 			BuiltIn().log("Incorrect nic_application_version was returned", "ERROR")
 			return False
-		elif str(state) != str(response['nic_bootloader_version']):
+		elif str(state) != boot_version: #str(response['nic_bootloader_version']):
 			BuiltIn().log("Incorrect nic_bootloader_version was returned", "ERROR")
 			return False
 		else:
@@ -321,7 +342,6 @@ def validate_get_meter_version_command(response, state):
 	else:
 		BuiltIn().log("Response contains incorrect value!", "ERROR")
 		return False
-
 
 def validate_get_oflow_detect_enable(response, state):
 
@@ -561,13 +581,13 @@ def validate_get_manual_recover_enable(response, state):
 			BuiltIn().log("manual_recover_enable stats was not validated.", "INFO")
 			return True
 		elif int(state) == 1 and response['manual_recover_enable'] != 1:
-			BuiltIn().log("Valve state should return 1, But 0 has been returned!", "ERROR")
+			BuiltIn().log("Manual recover state should return 1, But 0 has been returned!", "ERROR")
 			return False
 		elif int(state) == 0 and response['manual_recover_enable'] != 0:
-			BuiltIn().log("Valve state should return 0, But 1 has been returned!", "ERROR")
+			BuiltIn().log("Maunal recover state should return 0, But 1 has been returned!", "ERROR")
 			return False
 		elif response['manual_recover_enable'] > 1:
-			BuiltIn().log("Valve state greater than 1!", "ERROR")
+			BuiltIn().log("Manual recover state greater than 1!", "ERROR")
 			return False
 		else:
 			BuiltIn().log("Validation Successful.", "INFO")
@@ -575,6 +595,230 @@ def validate_get_manual_recover_enable(response, state):
 	else:
 		BuiltIn().log("Response contains incorrect value!", "ERROR")
 		return False
+
+def validate_get_meter_firmware_version(response):
+
+
+	print 'result_code = ' + str(response['result_code']) + '\n'
+	print 'version = ' + str(response['version']) + '\n'
+
+	if 	(
+			'result_code' not in response or
+			'version' not in response
+		):
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		if response['result_code'] == 8:
+			BuiltIn().log("Result_code = 8, Unknon Meter State has been returned!", "WARN")
+			return True
+		elif len(str(response['version'])) < 5:
+			BuiltIn().log("Incorrect version has been returned!", "ERROR")
+			return False
+		else:
+			BuiltIn().log("Validation Successful.", "INFO")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
+def validate_get_meter_shutoff_codes(response):
+	print 'result_code = ' + str(response['result_code']) + '\n'
+	print 'shutoff_codes = ' + str(response['shutoff_codes']) + '\n'
+
+	if 	(
+			'result_code' not in response or
+			'shutoff_codes' not in response
+		):
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		elif len(str(response['shutoff_codes'])) < 5:
+			BuiltIn().log("Incorrect version has been returned!", "ERROR")
+			return False
+		else:
+			BuiltIn().log("Validation Successful.", "INFO")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
+def	validate_get_meter_serial_number(response, state):
+	print 'state = ' + str(state)
+	print 'result_code = ' + str(response['result_code']) + '\n'
+	print 'meter_serial_number = ' + str(response['meter_serial_number']) + '\n'
+
+	if 	(
+			'result_code' not in response or
+			'meter_serial_number' not in response
+		):
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		elif state is None:
+			BuiltIn().log("meter_serial_number stats was not validated.", "INFO")
+			return True
+		elif str(response['meter_serial_number']) != str(state):
+			BuiltIn().log("Incorrect meter_serial_number has been returned!", "ERROR")
+			return False
+		else:
+			BuiltIn().log("Validation Successful.", "INFO")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
+def validate_get_electric_qnt_value(response):
+	print 'result_code = ' + str(response['result_code']) + '\n'
+	print 'electric_quantity_value = ' + str(response['electric_quantity_value']) + '\n'
+
+	if 	(
+			'result_code' not in response or
+			'electric_quantity_value' not in response
+		):
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		elif int(response['electric_quantity_value']) <= 0 :
+			BuiltIn().log("Incorrect electric_quantity_value has been returned!", "ERROR")
+			return False
+		else:
+			BuiltIn().log("Validation Successful.", "INFO")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
+def validate_get_comms_mode(response, state):
+
+	print 'state = ' + str(state)
+	print 'result_code = ' + str(response['result_code'])
+	print 'meter_comms_mode = ' + str(response['meter_comms_mode'])
+	
+	if 	(
+			'result_code' not in response or
+			'meter_comms_mode' not in response
+		):
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if state is None:
+			BuiltIn().log("meter_comms_mode stats was not validated.", "INFO")
+			return True
+		elif int(state) == 1 and response['meter_comms_mode'] != 1:
+			BuiltIn().log("meter_comms_mode state should return 1, But 0 has been returned!", "ERROR")
+			return False
+		elif int(state) == 0 and response['meter_comms_mode'] != 0:
+			BuiltIn().log("meter_comms_mode state should return 0, But 1 has been returned!", "ERROR")
+			return False
+		elif response['meter_comms_mode'] > 1:
+			BuiltIn().log("meter_comms_mode state greater than 1!", "ERROR")
+			return False
+		elif response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		else:
+			BuiltIn().log("Validation Successful.", "INFO")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
+def validate_get_earthquake_sensor_state(response, state):
+	print 'state = ' + str(state)
+	print 'result_code = ' + str(response['result_code'])
+	print 'earthquake_sensor_state = ' + str(response['earthquake_sensor_state'])
+
+	if 	(
+			'result_code' not in response or
+			'earthquake_sensor_state' not in response
+		):
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		elif state is None:
+			BuiltIn().log("earthquake_sensor_state stats was not validated.", "INFO")
+			return True
+		elif int(state) == 1 and response['earthquake_sensor_state'] != 0:
+			BuiltIn().log("earthquake_sensor_state state should return 0, But 1 has been returned!", "ERROR")
+			return False
+		elif int(state) == 0 and response['earthquake_sensor_state'] != 1:
+			BuiltIn().log("earthquake_sensor_state state should return 1, But 0 has been returned!", "ERROR")
+			return False
+		elif int(response['earthquake_sensor_state']) > 1:
+			BuiltIn().log("earthquake_sensor_state state greater than 1!", "ERROR")
+			return False
+		else:
+			BuiltIn().log("Validation Successful.", "INFO")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
+def validate_get_pilot_light_mode_command(response, state):
+
+	state_para_1 = state[0].rsplit('=',1)[1]
+	state_para_2 = state[1].rsplit('=',1)[1]
+	state_para_3 = state[2].rsplit('=',1)[1]
+
+	print 'state_para_1 = ' + str(state_para_1)
+	print 'state_para_2 = ' + str(state_para_2)
+	print 'state_para_3 = ' + str(state_para_3)	
+	
+	print 'result_code = ' + str(response['result_code'])
+	print 'pilot_light_mode = ' + str(response['pilot_light_mode'])
+	print 'pilot_flow_min = ' + str(response['pilot_flow_min'])	
+	print 'pilot_flow_max = ' + str(response['pilot_flow_max'])
+
+	if 	(
+			'result_code' not in response or
+			'pilot_light_mode' not in response or
+			'pilot_flow_min' not in response or
+			'pilot_flow_max' not in response
+		):
+		BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+		return False
+	elif response['result_code'] < 10:
+		if response['result_code'] == 7:
+			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+			return True
+		elif response['result_code'] == 8:
+			BuiltIn().log("Result_code = 8, Unknon Meter State has been returned!", "WARN")
+			return True
+		elif state is None:
+			BuiltIn().log("pilot_light_mode stats was not validated.", "INFO")
+			return True
+		elif int(state_para_1) != response['pilot_light_mode']:
+			BuiltIn().log("Incorrect pilot_light_mode value has been returned!", "ERROR")
+			return False
+		elif int(state_para_2) != response['pilot_flow_min']:
+			BuiltIn().log("Incorrect pilot_flow_min value has been returned!", "ERROR")
+			return False
+		elif int(state_para_3) != response['pilot_flow_max']:
+			BuiltIn().log("Incorrect pilot_flow_max value has been returned!", "ERROR")
+			return False
+		else:
+			BuiltIn().log("Validation Successful.", "INFO")
+			return True
+	else:
+		BuiltIn().log("Response contains incorrect value!", "ERROR")
+		return False
+
 
 def validate_reponse_of_set_command(response):
 	print 'result_code = ' + str(response['result_code']) + '\n'
@@ -586,7 +830,7 @@ def validate_reponse_of_set_command(response):
 			BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
 			return True
 		elif response['result_code'] == 0:
-			BuiltIn().log("Valve stats has been set correctly.", "INFO")
+			BuiltIn().log("Set Command been set correctly.", "INFO")
 			return True
 		elif response['result_code'] == 1:
 			BuiltIn().log("MP_STATUS_FAILURE has been returned.", "INFO")

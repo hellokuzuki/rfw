@@ -121,7 +121,7 @@ Send Out Command To Multiple EIDs
     Log    *************** Command has been sent to multiple End Devices. ***************
 
 Wait And Validate Response Of Command
-    [Arguments]    ${command}    ${eid}    ${state}=${EMPTY}
+    [Arguments]    ${eid}    ${command}    ${state}=${EMPTY}
     Filter Records With EID    ${eid}
     ${cid}    Get CID Of Issued Command    ${command}
     ${res}    Get Response Of Issued Command    ${cid}    ${command}
@@ -149,7 +149,6 @@ Get CID Of Issued Command
     \    ${cmd}    Get Table Cell    ${LOGS_TABLE}    1    3
     \    ${cid}        Get Table Cell    ${LOGS_TABLE}    1    7
     \    ${status}     Get Table Cell    ${LOGS_TABLE}    1    4
-    \    Log to Console    *************** test test issued with CID ${cid} ***************
     \    Exit For Loop If    '${cid}' != 0 and '${command}' == '${cmd}' and '${status}' == 'Issued'
     Log to Console    *************** Command issued with CID ${cid} ***************
     Return From Keyword    ${cid}
@@ -157,7 +156,9 @@ Get CID Of Issued Command
 Get Rows Of Data From Logs
     [Arguments]    ${request_cid}    ${reqest_cmd}
     ${data}    Set Variable   ${EMPTY}
-    : For    ${index}    In Range    1    5
+    : For    ${index}    In Range    1    8
+    \    ${id}     Get Table Cell    ${LOGS_TABLE}    ${index}    1
+    \    Log To Console    Debug ==== this is id ${id}
     \    ${status}     Get Table Cell    ${LOGS_TABLE}    ${index}    4
     \    Continue For Loop If    'Responded' not in '${status}'
     \    ${cid}        Get Table Cell    ${LOGS_TABLE}    ${index}    7
@@ -170,9 +171,11 @@ Get Rows Of Data From Logs
 
 Get Response Of Issued Command
     [Arguments]    ${request_cid}    ${reqest_cmd}
-    : For    ${minute}    In Range    1    15
+    : For    ${minute}    In Range    1    10
     \    Wait And Click Refresh Button
     \    ${response}    Get Rows Of Data From Logs    ${request_cid}    ${reqest_cmd}
+    # \    Sleep    1m
+    \    Log To Console    retry = ${minute}
     \    Exit For Loop If    '${response}' != '${EMPTY}'
     Run Keyword If    '${response}' == '${EMPTY}'    Log     No Response has been returned within 15 mins    WARN
     Log To Console    ${response}
