@@ -11,8 +11,8 @@ Metadata            Admin GUI URL          *&{Metadata}[FMS_URL]*
 
 *** Variables ***
 ############ Version Information        ############
-&{Metadata}         LUA_VER=APL-LMT-YL01-1.0.14-STB
-...                 FW_VER=LORA-PL-1.0.12-STB
+&{Metadata}         LUA_VER=APL-LMT-YL01-1.0.15-STB
+...                 FW_VER=LORA-PL-1.0.109-STG
 ...                 FMS_URL=http://mwlora-admin.test.freestyleiot.com/  # Mark's Testing Switch
                     #http://lora-admin.dev.freestyleiot.com/       # Development Switch
                     #http://lora-yl-admin.cloud.freestyleiot.com/  # Taiwan Production Switch
@@ -24,4 +24,3 @@ ${PASSWORD}         freestyle
 
 ${eid}        7ff9011202000001
 ${gw}         990200000000269f
-

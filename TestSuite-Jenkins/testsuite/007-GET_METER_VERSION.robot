@@ -10,4 +10,4 @@ ${cmd}        GET_METER_VERSION
 Validate Command GET_METER_VERSION
     Select GateWay      ${gw}
     Send Out Command To EID    ${eid}    ${cmd}
-    Wait And Validate Response Of Command    ${eid}    ${cmd}    ${lua_ver}
+    Wait And Validate Response Of Command    ${eid}    ${cmd}    ${FW_VER}
