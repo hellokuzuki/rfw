@@ -146,9 +146,9 @@ Filter Records With EID
 Get CID Of Issued Command
     [Arguments]    ${command}
     : For    ${index}    In Range    1    5
-    \    ${cmd}    Get Table Cell    ${LOGS_TABLE}    1    3
-    \    ${cid}        Get Table Cell    ${LOGS_TABLE}    1    7
-    \    ${status}     Get Table Cell    ${LOGS_TABLE}    1    4
+    \    ${cmd}    Get Table Cell    ${LOGS_TABLE}    ${index}    3
+    \    ${cid}        Get Table Cell    ${LOGS_TABLE}    ${index}    7
+    \    ${status}     Get Table Cell    ${LOGS_TABLE}    ${index}    4
     \    Exit For Loop If    '${cid}' != 0 and '${command}' == '${cmd}' and '${status}' == 'Issued'
     Log to Console    *************** Command issued with CID ${cid} ***************
     Return From Keyword    ${cid}
