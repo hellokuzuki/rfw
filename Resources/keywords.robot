@@ -97,8 +97,8 @@ Send Out Command To EID
     Wait Until Element Is Visible    ${XPATH_COMMAND_SEND}
     Click Element    ${XPATH_COMMAND_SEND}
     ${present}    Run Keyword And Return Status    Element Should Be Visible    ${XPATH_COMMAND_OK}
-    Run Keywword If    ${present}    Wait Until Element Is Visible    ${XPATH_COMMAND_OK}
-    Run Keywword If    ${present}    Click Element    ${XPATH_COMMAND_OK}
+    Run Keyword If    ${present}    Wait Until Element Is Visible    ${XPATH_COMMAND_OK}
+    Run Keyword If    ${present}    Click Element    ${XPATH_COMMAND_OK}
     Log    *************** Command has been sent to End Device. ***************
 
 Send Out Command To Multiple EIDs
