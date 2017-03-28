@@ -96,8 +96,9 @@ Send Out Command To EID
     Input Text    cmd_args    ${para}
     Wait Until Element Is Visible    ${XPATH_COMMAND_SEND}
     Click Element    ${XPATH_COMMAND_SEND}
-    Wait Until Element Is Visible    ${XPATH_COMMAND_OK}
-    Click Element    ${XPATH_COMMAND_OK}
+    ${present}    Run Keyword And Return Status    Element Should Be Visible    ${XPATH_COMMAND_OK}
+    Run Keywword If    ${present}    Wait Until Element Is Visible    ${XPATH_COMMAND_OK}
+    Run Keywword If    ${present}    Click Element    ${XPATH_COMMAND_OK}
     Log    *************** Command has been sent to End Device. ***************
 
 Send Out Command To Multiple EIDs

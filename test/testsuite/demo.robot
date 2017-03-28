@@ -23,7 +23,7 @@ Demo
     Select GateWay      990200000000269f
     : For    ${index}    In Range    1    100
     \    Log To Console    ${index}
-    \    Send Out Command To Multiple EIDs    GET_METER_FIRMWARE_VERSION    ${EMPTY}      7ff9011202000001
+    \    Send Out Command To Multiple EIDs    GET_METER_FIRMWARE_VERSION    ${EMPTY}      7ff9011202000005
     \    Sleep    15m
 
 
