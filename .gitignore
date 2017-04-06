@@ -2,5 +2,6 @@
 *.xml
 *.html
 *.log
+*.pyc
 /testcase/playground
 *.png
