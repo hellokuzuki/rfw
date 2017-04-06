@@ -2,7 +2,7 @@
 Resource    ../../Resources/variables.robot
 Resource    ../../Resources/keywords.robot
 Resource    ./environment.robot
-Library     ../../Resources/validationLib.py
+Library     LoraLibrary
 
 *** Variables ***
 ${get_cmd}        GET_OFLOW_DETECT_RATE

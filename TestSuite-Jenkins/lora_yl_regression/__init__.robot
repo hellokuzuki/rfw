@@ -3,6 +3,7 @@ Library             DateTime
 Resource            ../../Resources/keywords.robot
 Suite Setup         Run Test Suite Setup Process    ${FMS_URL}    FireFox    ${USERNAME}    ${PASSWORD}
 Suite Teardown      Run Test Suite Teardown Process
+Test Setup          Log To Console    ${EMPTY}
 Test Teardown       Run Test Case Teardown Process
 ############ Metadata of Results Page   ############
 Metadata            Lua App Version        *&{Metadata}[LUA_VER]*
