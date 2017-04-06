@@ -1,6 +1,6 @@
 *** Settings ***
 Library     Selenium2Library    implicit_wait=3
-#Library     ../Resources/validationLib.py
+# Library     LoraLibrary    ${TP}
 Library     OperatingSystem
 Library     DateTime
 Library     Collections
