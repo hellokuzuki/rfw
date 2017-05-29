@@ -4,4 +4,5 @@
 *.log
 *.pyc
 /testcase/playground
+/Resources/lib/*.pyc
 *.png
