@@ -5,4 +5,6 @@
 *.pyc
 /testcase/playground
 /Resources/lib/*.pyc
+/TestSuite-Jenkins/temp/*
+/TestSuite-Jenkins/test/*
 *.png

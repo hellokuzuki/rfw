@@ -1,6 +1,6 @@
 *** Settings ***
 Library             LoraLibrary    micom
-Resource            ../../Resources/keywords_ref.robot
+Resource            ../../Resources/keywords.robot
 Suite Setup         Run Test Suite Setup Process    ${FMS_URL}    FireFox    ${USERNAME}    ${PASSWORD}
 Suite Teardown      Run Test Suite Teardown Process
 Test Setup          Log To Console    ${EMPTY}
