@@ -1,5 +1,5 @@
 *** Settings ***
-Library     APILibrary
+Library     APILibrary    test.xlsx
 Resource    ../../Resources/api_keywords.robot
 Resource    ../../Resources/api_variables.robot
 
@@ -7,4 +7,4 @@ Resource    ../../Resources/api_variables.robot
 
 *** Test Cases ***
 Add Nodes To Application Server
-    Add Nodes To AS    @{AS_DEV_EUIs}
+    Add Nodes To AS

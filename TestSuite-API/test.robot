@@ -65,3 +65,8 @@ Validate Command
     # get_by_header    enviornment    TEST LAB SERVER
     # # get_by_header    enviornment    TEST SERVER
 
+    # add Nodes To AS
+    # fms add devices    TEST LAB SERVER    YL EID
+    # fms Activate Devices    TEST LAB SERVER    YL EID
+    # fms Device Remove App    TEST LAB SERVER    YL EID
+    fms Remove Devices    TEST LAB SERVER    YL EID

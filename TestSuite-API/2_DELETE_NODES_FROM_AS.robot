@@ -1,5 +1,5 @@
 *** Settings ***
-Library     APILibrary
+Library     APILibrary    test.xlsx
 Resource    ../../Resources/api_keywords.robot
 Resource    ../../Resources/api_variables.robot
 
@@ -7,4 +7,4 @@ Resource    ../../Resources/api_variables.robot
 
 *** Test Cases ***
 Delete Nodes To Application Server
-    Delete Nodes From AS    @{AS_DEV_EUIs}
+    Delete Nodes From AS

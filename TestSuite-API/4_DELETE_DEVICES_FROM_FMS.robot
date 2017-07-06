@@ -1,11 +1,13 @@
 *** Settings ***
-Library     APILibrary
+Library     APILibrary    test.xlsx
 Resource    ../../Resources/api_keywords.robot
 Resource    ../../Resources/api_variables.robot
 
 *** Variables ***
+${test_server}    TEST LAB SERVER
+${devices}        YL EID
 
 *** Test Cases ***
 Delete Devices From FMS
-    Login And Return SessionID
-    Delete APP And Remove Devices FROM FMS    ${FMS_URL}    ${SessionID}    @{DEVICES_EID}
+    Login And Check SessionID XLS    ${test_server}
+    Delete APP And Remove Devices FROM FMS    ${test_server}    ${devices}

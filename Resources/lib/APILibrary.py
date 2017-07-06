@@ -1,9 +1,10 @@
 import requests
-import datetime
+import time
 import logging
 import json
 import os
 import PYXL
+from datetime import datetime, timedelta
 from robot.libraries.BuiltIn import BuiltIn
 from robot.api import logger
 from openpyxl import load_workbook
@@ -17,14 +18,17 @@ class APILibrary():
 
     def __init__(self, testfile=None):
         global g_testfile
-        g_testfile = testfile
+        global g_testserver
+        
+        if testfile is not None:
+            g_testfile = testfile
 
     def getUTCTime(self):
-        now = datetime.datetime.utcnow()
+        now = datetime.utcnow()
         return now
 
     def convertTime(self, time):
-        return datetime.datetime.strptime(time,'%Y-%m-%dT%H:%M:%S.%fZ')
+        return datetime.strptime(time,'%Y-%m-%dT%H:%M:%S.%fZ')
 
     def createSessionFile(self):
         os.chdir('../Resources')
@@ -61,14 +65,31 @@ class APILibrary():
         # commands = PYXL.get_commands_by_sheet(g_testfile, 'yl_command_test')
         # BuiltIn().log_to_console(str(commands))
 
-        cid = self.deviceSendCommands(header,'yl_command_test', "7ff9010202000006")
-        BuiltIn().log_to_console(str(cid))
+        # cid = self.deviceSendCommands(header,'yl_command_test', "7ff9010202000006")
+        # BuiltIn().log_to_console(str(cid))
         # for cmd in commands:
         #     cmd_name, cmd_para = str(cmd[0]), str(cmd[1])
         #     if cmd_para == "None":
         #         dataValues = {"eid":devEID, "name":cmd_name}
         #     else:
         #         dataValues = {"eid":devEID, "name":cmd_name}
+        pass
+
+    def get_app_eui(self):
+        euis = PYXL.get_as_dev_eui(g_testfile)
+        BuiltIn().log_to_console(str(euis))
+
+        app_eui = PYXL.get_as_app_eui(g_testfile)
+        BuiltIn().log_to_console(str(app_eui))
+
+        app_key = PYXL.get_as_app_key(g_testfile)
+        BuiltIn().log_to_console(str(app_key))
+
+        node_name = PYXL.get_as_node_name(g_testfile)
+        BuiltIn().log_to_console(str(node_name))
+
+        as_url1 = PYXL.get_as_url(g_testfile)
+        BuiltIn().log_to_console(str(as_url1))
 
 
 
@@ -103,7 +124,6 @@ class APILibrary():
                 return None
         # ression id existing in cookie file.
         else:
-
             with open('cookie.txt', 'r') as myfile:
                 sessionid = myfile.read().replace('\n', '')
 
@@ -137,6 +157,10 @@ class APILibrary():
                     BuiltIn().log_to_console('*** Login Failed. ***')
                     return None
 
+    def userLoginXLS(self, server):
+        session = PYXL.set_session_by_header(g_testfile, server)
+        return session
+
     ########################################
     ###   2 Get All Online Devices       ###
     ########################################
@@ -162,7 +186,6 @@ class APILibrary():
         dataValues       = {"sessionid":session}
         response         = requests.post(url=userLoginRequest,data=dataValues)
         jsonReply        = json.loads(response.text)
-
         for obj in range(0, len(jsonReply)):
             if (
                 jsonReply[obj]['status'] == 'Online' or
@@ -172,6 +195,7 @@ class APILibrary():
                 jsonReply[obj]['status'] is None
                 ):
                 devices.append(jsonReply[obj]['eid'].encode('utf-8'))
+
         
         BuiltIn().log_to_console("Available Devices = " + str(devices))
         return devices
@@ -193,7 +217,6 @@ class APILibrary():
 
         jsonReply = json.loads(response.text)
         retStatus = jsonReply['response'].encode('utf-8')
-
         BuiltIn().log_to_console(jsonReply)
 
         if retStatus == 'ok':
@@ -243,8 +266,6 @@ class APILibrary():
 
         return cid
 
- 
-
     ########################################
     ###   4 Get Transaction              ###
     ########################################
@@ -276,19 +297,20 @@ class APILibrary():
     ###   5 Brocaar Application Server   ###
 
     ########################################
-    def addNodesToAS(self, *dev_list):
-        as_devices  = dev_list
-        as_url      = BuiltIn().get_variable_value("${AS_URL}")
-        app_eui     = BuiltIn().get_variable_value("${AS_APP_EUI}")
-        app_key     = BuiltIn().get_variable_value("${AS_APP_KEY}")
-        node_name   = BuiltIn().get_variable_value("${AS_NODE_NAME}")
+    def addNodesToAS(self):
+        dev_euis    = PYXL.get_as_dev_eui(g_testfile)
+        app_eui     = PYXL.get_as_app_eui(g_testfile)
+        app_key     = PYXL.get_as_app_key(g_testfile)
+        node_name   = PYXL.get_as_node_name(g_testfile)
+        as_url      = PYXL.get_as_url(g_testfile)
+
         requestAPI  = as_url + '/api/node'
         headers     = {'Grpc-Metadata-Authorization': 'ghydOwk7fX9XVX+Ssm4Doif+RRC83NP5DVeX8jvh5J0=', 'Content-Type': 'application/json'}
         BuiltIn().log_to_console(" ")
-        for i in range (0, len(as_devices)):
-            if len(as_devices[i]) == 16:
+        for i in range (0, len(dev_euis)):
+            if len(dev_euis[i]) == 16:
                 dataValues  = {
-                      "devEUI": str(as_devices[i]),
+                      "devEUI": str(dev_euis[i]),
                       "appEUI": str(app_eui),
                       "appKey": str(app_key),
                       "rxDelay": 0,
@@ -296,46 +318,59 @@ class APILibrary():
                       "channelListID": "0",
                       "rxWindow": "RX1",
                       "rx2DR": 0,
-                      "name": str(node_name) + " " + str(as_devices[i]),
+                      "name": str(node_name) + " " + str(dev_euis[i]),
                       "relaxFCnt": False
                 }
 
                 response = requests.post(url=requestAPI, data=json.dumps(dataValues), headers=headers, verify=False)
                 BuiltIn().log_to_console(str(response.reason))
                 if response.reason == "OK":
-                    BuiltIn().log_to_console("Device " + str(as_devices[i]) + " has been added to Application Server.")
+                    BuiltIn().log_to_console("Device " + str(dev_euis[i]) + " has been added to Application Server.")
                 else:
-                    BuiltIn().log_to_console("Device " + str(as_devices[i]) + " failed to be added to Application Server.")
+                    BuiltIn().log_to_console("Device " + str(dev_euis[i]) + " failed to be added to Application Server.")
             else:
-                BuiltIn().log_to_console("Length of Device EUI is incorrect:  " + str(as_devices[i]) + " failed to be added to Application Server.")
+                BuiltIn().log_to_console("Length of Device EUI is incorrect:  " + str(dev_euis[i]) + " failed to be added to Application Server.")
 
-    def deleteNodesFromAS(self, *dev_list):
-        as_devices  = dev_list
-        as_url      = BuiltIn().get_variable_value("${AS_URL}")
+    def deleteNodesFromAS(self):
+        dev_euis    = PYXL.get_as_dev_eui(g_testfile)
+        as_url      = PYXL.get_as_url(g_testfile)
         BuiltIn().log_to_console(" ")
-        for i in range (0, len(as_devices)):
-            if len(as_devices[i]) == 16:
-                requestAPI  = as_url + '/api/node' + '/' + str(as_devices[i])
+        for i in range (0, len(dev_euis)):
+            if len(dev_euis[i]) == 16:
+                requestAPI  = as_url + '/api/node' + '/' + str(dev_euis[i])
                 response = requests.delete(url=requestAPI, verify=False)
-                # BuiltIn().log_to_console("Delete Device " + str(as_devices[i]) + " -> " + str(response.reason))
+                # BuiltIn().log_to_console("Delete Device " + str(dev_euis[i]) + " -> " + str(response.reason))
                 if response.reason == "OK":
-                    BuiltIn().log_to_console("Device " + str(as_devices[i]) + " has been removed from Application Server.")
+                    BuiltIn().log_to_console("Device " + str(dev_euis[i]) + " has been removed from Application Server.")
                 else:
-                    BuiltIn().log_to_console("Device " + str(as_devices[i]) + " failed to be removed from Application Server.")
+                    BuiltIn().log_to_console("Device " + str(dev_euis[i]) + " failed to be removed from Application Server.")
             else:
-                BuiltIn().log_to_console("Length of Device EUI is incorrect:  " + str(as_devices[i]) + " failed to be removed from Application Server.")
+                BuiltIn().log_to_console("Length of Device EUI is incorrect:  " + str(dev_euis[i]) + " failed to be removed from Application Server.")
 
     ########################################
     ###   6 FMS   ###
     ########################################
 
-    def fmsAddDevices(self, urlRequest, session, gw_eid, app_bundle, dev_type, *dev_eid):
-        # cookie = {"sessionid":session}
+    # def fmsAddDevices(self, urlRequest, session, gw_eid, app_bundle, dev_type, *dev_eid):
+    def fmsAddDevices(self, testServer, dev_header):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
+        fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
+        session     = PYXL.get_session_by_header(g_testfile, testServer)
+        gw_eid      = PYXL.get_gw_by_header(g_testfile, testServer)
+        dev_type    = PYXL.get_dev_type_by_header(g_testfile, testServer)
+        app_bdl_yl  = PYXL.get_app_bdl_yl_by_header(g_testfile, testServer)
+        app_bundle  = app_bdl_yl
+        # app_bdl_mc  = PYXL.get_app_bdl_mc_by_header(g_testfile, testServer)
+        # BuiltIn().log_to_console(urlRequest)
+        # BuiltIn().log_to_console(str(fms_devices))
+        # BuiltIn().log_to_console(str(session))
+        # BuiltIn().log_to_console(str(gw_eid))
+        # BuiltIn().log_to_console(str(dev_type))
+        # BuiltIn().log_to_console(str(app_bdl_yl))
+        # BuiltIn().log_to_console(str(app_bdl_mc))
+
         requestAPI = urlRequest + '/addDevice'
-        fms_devices  = dev_eid
-
         avb_devices = self.getDevices(urlRequest, session)
-
         BuiltIn().log_to_console(" ")
         for i in range (0, len(fms_devices)):
             if len(fms_devices[i]) == 16 and fms_devices[i] not in avb_devices:
@@ -351,9 +386,12 @@ class APILibrary():
             else:
                 BuiltIn().log_to_console("fmsAddDevices: " + fms_devices[i] + " Length of Device EUI is incorrect OR Device already existing!")
 
-    def fmsActivateDevices(self, urlRequest, session, gw_eid, *dev_eid):
+    def fmsActivateDevices(self, testServer, dev_header):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
+        session     = PYXL.get_session_by_header(g_testfile, testServer)
+        fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
+        gw_eid      = PYXL.get_gw_by_header(g_testfile, testServer)
         requestAPI  = urlRequest + '/gatewayActivateDevice'
-        fms_devices = dev_eid
         avb_devices = self.getDevices(urlRequest, session)
 
         BuiltIn().log_to_console(" ")
@@ -370,9 +408,11 @@ class APILibrary():
             else:
                 BuiltIn().log_to_console("fmsActivateDevices: " + fms_devices[i] + " Length of Device EUI is incorrect AND Device to be activated is not existing!")
 
-    def fmsDeviceRemoveApp(self, urlRequest, session, *dev_eid):
+    def fmsDeviceRemoveApp(self, testServer, dev_header):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
+        session     = PYXL.get_session_by_header(g_testfile, testServer)
+        fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
         requestAPI  = urlRequest + '/deviceRemoveApp'
-        fms_devices = dev_eid
         avb_devices = self.getDevices(urlRequest, session)
 
         BuiltIn().log_to_console(" ")
@@ -388,15 +428,36 @@ class APILibrary():
             else:
                 BuiltIn().log_to_console("fmsDeviceRemoveApp: Length of Device EUI is incorrect AND Device to be removed is not existing!")
 
-    def fmsDeviceUpdateApp(self, urlRequest, session, *dev_eid):
+    def fmsDeviceUpdateApp(self, testServer, dev_header):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
+        session     = PYXL.get_session_by_header(g_testfile, testServer)
+        new_app     = PYXL.get_app_update_version(g_testfile, testServer)
+        fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
+
         requestAPI = urlRequest + '/setDevice'
-        fms_devices = dev_eid
+        avb_devices = self.getDevices(urlRequest, session)
+
+        BuiltIn().log_to_console(" ")
+        for i in range (0, len(fms_devices)):
+            if len(fms_devices[i]) == 16 and fms_devices[i] in avb_devices:
+                dataValues       = { 
+                    "sessionid": session,
+                    "edit_eid": str(fms_devices[i]),
+                    "bundle_name": str(new_app)
+                    }
+                response         = requests.post(url=requestAPI, data=dataValues)
+                jsonReply        = json.loads(response.text)
+                BuiltIn().log_to_console(jsonReply)
+            else:
+                BuiltIn().log_to_console("fmsDeviceUpdateApp: Length of Device EUI is incorrect AND Device to be removed is not existing!")
 
 
-    def fmsRemoveDevices(self, urlRequest, session, *dev_eid):
+    def fmsRemoveDevices(self, testServer, dev_header):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
+        session     = PYXL.get_session_by_header(g_testfile, testServer)
+        fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
         requestAPI_setDevice     = urlRequest + '/setDevice'
         requestAPI_removeDevice  = urlRequest + '/removeDevice'
-        fms_devices = dev_eid
 
         avb_devices = self.getDevices(urlRequest, session)
         BuiltIn().log_to_console(" ")
@@ -425,3 +486,72 @@ class APILibrary():
                 BuiltIn().log_to_console(jsonReply)
             else:
                 BuiltIn().log_to_console("fmsRemoveDevices(2nd Step): Length of Device EUI is incorrect AND Device to be removed is not existing!")
+
+    def deviceSendInitCommand(self, testServer, dev_header, command):
+
+        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
+        session     = PYXL.get_session_by_header(g_testfile, testServer)
+        fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
+        cookie = {"sessionid":session}
+
+        requestAPI = urlRequest + '/DeviceSendCommand'
+        eid_cid = {}
+        for dev in fms_devices:
+            dataValues = {"eid":str(dev), "name":command}
+
+            response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
+            jsonReply = json.loads(response.text)
+            retStatus = jsonReply['response'].encode('utf-8')
+
+            if retStatus == 'ok':
+                eid_cid.update({str(dev) : str(jsonReply['cid'])})
+        return eid_cid
+
+    def ValidateInitCommand(self, testServer, command, **eid_cid):
+
+        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
+        session     = PYXL.get_session_by_header(g_testfile, testServer)
+        cookie = {"sessionid":session}
+
+        requestAPI = urlRequest + '/getTransactions'
+        trans_min_time = datetime.utcnow() - timedelta(minutes=45)
+        trans_min_time = trans_min_time.strftime("%Y-%m-%d %H:%M:%S")
+
+        validate_time = datetime.utcnow()
+        validate_time = validate_time.strftime("%Y-%m-%d %H:%M:%S")
+
+        timedout_time = datetime.utcnow() + timedelta(minutes=45)
+        # timedout_time = timedout_time.strftime("%Y-%m-%d %H:%M:%S")
+
+        while True:
+            BuiltIn().log_to_console("current time = " + str(datetime.utcnow()))
+            BuiltIn().log_to_console("timedout time = " + str(timedout_time.strftime("%Y-%m-%d %H:%M:%S")))
+            BuiltIn().log_to_console("datetime.utcnow() > timedout_time" + str(datetime.utcnow() > timedout_time))
+            for eid, cid in eid_cid.items():
+                dataValues = {"eid":str(eid), "qtype":"cid,command,status", "query":str(cid) + "," + str(command) + "," + "Responded*", "after":str(trans_min_time)}
+                response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
+                jsonReply = json.loads(response.text)
+
+                if len(jsonReply['rows']) == 1:
+                    eid_cid.pop(str(eid))
+                    BuiltIn().log_to_console(str(eid) + " Popped ")
+                    continue
+                elif len(jsonReply['rows']) > 1:
+                    BuiltIn().log_to_console(" Not poped because row > 1 ")
+                    BuiltIn().log_to_console(str(jsonReply))
+                    continue
+                else:
+                    continue
+            if len(eid_cid) == 0:
+                return
+            elif datetime.utcnow() > timedout_time:
+                break
+            else:
+                while True:
+                    time.sleep(60)
+                    BuiltIn().log_to_console(" Waited for 1 min ")
+                    break
+        BuiltIn().log(" **** Timed out response Found! ****", "ERROR")
+        BuiltIn().log_to_console(" **** Timed out response Found! ****" + str(eid_cid))
+        return eid_cid
+

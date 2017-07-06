@@ -14,6 +14,13 @@ Login And Return SessionID
     ${STARTTIME}    Get UTC Time
     Set Global Variable    ${STARTTIME}
 
+Login And Check SessionID XLS
+    [Arguments]    ${testserver}
+    ${SessionID}    User Login XLS    ${testserver}
+    Set Global Variable    ${SessionID}
+    ${STARTTIME}    Get UTC Time
+    Set Global Variable    ${STARTTIME}
+
 Get Online Devices Info
     [Arguments]    ${url}=${FMS_URL}    ${session}=${SessionID}
     ${len}    Get Length    @{Devices}
@@ -41,18 +48,22 @@ Get Response And Validate
     ${response}    Run Keyword If    ${response} != ${None}    Return From Keyword    ${response}
 
 Add Devices To FMS And Activate Devices
-    [Arguments]     ${url}=${FMS_URL}    ${session}=${SessionID}    ${GATEWAY_EID}=${EMPTY}    ${APP_BUNDLE}=${EMPTY}    ${DEVICE_TYPE}=${EMPTY}    @{DEVICES_EID}
-    FMS Add Devices    ${FMS_URL}    ${SessionID}    ${GATEWAY_EID}    ${APP_BUNDLE}    ${DEVICE_TYPE}    @{DEVICES_EID}
-    FMS Activate Devices    ${FMS_URL}    ${SessionID}    ${GATEWAY_EID}    @{DEVICES_EID}
+    [Arguments]     ${testserver}    @{DEVICES_EID}
+    FMS Add Devices    ${testserver}    @{DEVICES_EID}
+    FMS Activate Devices    ${testserver}    @{DEVICES_EID}
 
 Delete APP And Remove Devices FROM FMS
-    [Arguments]     ${url}=${FMS_URL}    ${session}=${SessionID}    @{DEVICES_EID}
-    FMS Device Remove App    ${FMS_URL}    ${SessionID}    @{DEVICES_EID}
-    FMS Remove Devices    ${FMS_URL}    ${SessionID}    @{DEVICES_EID}
+    [Arguments]     ${testserver}    @{DEVICES_EID}
+    FMS Device Remove App    ${testserver}    @{DEVICES_EID}
+    FMS Remove Devices    ${testserver}    @{DEVICES_EID}
 
-Delete APp And Install New App
-    [Arguments]     ${url}=${FMS_URL}    ${session}=${SessionID}    @{DEVICES_EID}
-    FMS Device Remove App    ${FMS_URL}    ${SessionID}    @{DEVICES_EID}
+Delete APP And Install New App
+    [Arguments]     ${testserver}    @{DEVICES_EID}
+    FMS Device Remove App    ${testserver}    @{DEVICES_EID}
+    FMS Device Update App    ${testserver}    @{DEVICES_EID}
+    FMS Activate Devices    ${testserver}    @{DEVICES_EID}
+
+
 
 
 

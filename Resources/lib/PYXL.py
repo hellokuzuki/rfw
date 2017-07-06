@@ -10,10 +10,18 @@ CONST_FMS_URL           = 2
 CONST_GATEWAY           = 3
 CONST_DEVICE_TYPE       = 4
 CONST_APP_BUNDLE_YL     = 5
-CONST_APP_BUNDLE_YL     = 6
+CONST_APP_BUNDLE_MC     = 6
 CONST_USER              = 7
 CONST_PASSWORD          = 8
 CONST_SESSION_ID        = 9
+CONST_APP_UPDATE        = 10
+
+CONST_SHEET_AS          = 'appserver'
+CONST_AS_DEV_EUI_COL    = 1
+CONST_AS_APP_EUI_COL    = 2
+CONST_AS_APP_KEY_COL    = 3
+CONST_AS_NODE_NAME_COL  = 4
+CONST_AS_URL_COL        = 5
 
 CONST_SHEET_DEVICE      = 'devices'
 
@@ -26,21 +34,43 @@ def load_xl(datafile, sheet):
     os.chdir(owd)
     return wb, ws
 
-def get_devices_by_header(datafile, header):
-    wb, ws = load_xl(datafile, CONST_SHEET_DEVICE)
-    devices = []
-    for i in range(1, ws.max_column + 1):
-        if header == ws.cell(row=1, column=i).value:
-            for j in range(2, ws.max_row + 1):
-                devices.append(str(ws.cell(row=j, column=i).value))
-    return devices
-
-def get_url_by_header(datafile, header):
+######################
+# SHEET: envionrment
+######################
+def get_url_by_header(datafile, server):
     wb, ws = load_xl(datafile, CONST_SHEET_ENV)
     for i in range(1, ws.max_column + 1):
-        if header == ws.cell(row=1, column=i).value:
+        if server == ws.cell(row=1, column=i).value:
             url = ws.cell(row=CONST_FMS_URL, column=i).value
     return url
+
+def get_gw_by_header(datafile, server):
+    wb, ws = load_xl(datafile, CONST_SHEET_ENV)
+    for i in range(1, ws.max_column + 1):
+        if server == ws.cell(row=1, column=i).value:
+            gateway = ws.cell(row=CONST_GATEWAY, column=i).value
+    return gateway
+
+def get_dev_type_by_header(datafile, server):
+    wb, ws = load_xl(datafile, CONST_SHEET_ENV)
+    for i in range(1, ws.max_column + 1):
+        if server == ws.cell(row=1, column=i).value:
+            dev_type = ws.cell(row=CONST_DEVICE_TYPE, column=i).value
+    return dev_type
+
+def get_app_bdl_yl_by_header(datafile, server):
+    wb, ws = load_xl(datafile, CONST_SHEET_ENV)
+    for i in range(1, ws.max_column + 1):
+        if server == ws.cell(row=1, column=i).value:
+            app_bundle = ws.cell(row=CONST_APP_BUNDLE_YL, column=i).value
+    return app_bundle
+
+def get_app_bdl_mc_by_header(datafile, server):
+    wb, ws = load_xl(datafile, CONST_SHEET_ENV)
+    for i in range(1, ws.max_column + 1):
+        if server == ws.cell(row=1, column=i).value:
+            app_bundle = ws.cell(row=CONST_APP_BUNDLE_MC, column=i).value
+    return app_bundle
 
 def get_user_by_header(datafile, header):
     wb, ws = load_xl(datafile, CONST_SHEET_ENV)
@@ -56,19 +86,19 @@ def get_password_by_header(datafile, header):
             pwd = ws.cell(row=CONST_PASSWORD, column=i).value
     return pwd
 
-def get_session_by_header(datafile, header):
+def get_session_by_header(datafile, server):
     wb, ws = load_xl(datafile, CONST_SHEET_ENV)
     for i in range(1, ws.max_column + 1):
-        if header == ws.cell(row=1, column=i).value:
+        if server == ws.cell(row=1, column=i).value:
             sessionid = ws.cell(row=CONST_SESSION_ID, column=i).value
     return sessionid
 
-def set_session_by_header(datafile, header):
+def set_session_by_header(datafile, server):
     wb, ws = load_xl(datafile, CONST_SHEET_ENV)
-    urlRequest = get_url_by_header(datafile, header)
-    username = get_user_by_header(datafile, header)
-    password  = get_password_by_header(datafile, header)
-    sessionid = get_session_by_header(datafile, header)
+    urlRequest = get_url_by_header(datafile, server)
+    username = get_user_by_header(datafile, server)
+    password  = get_password_by_header(datafile, server)
+    sessionid = get_session_by_header(datafile, server)
 
     userLoginRequest = urlRequest + '/login'
     dataValues       = {"username":username, "password":password}
@@ -110,6 +140,54 @@ def set_session_by_header(datafile, header):
                         return retSessionID
             else:
                 return None
+
+def get_app_update_version(datafile, server):
+    wb, ws = load_xl(datafile, CONST_SHEET_ENV)
+    for i in range(1, ws.max_column + 1):
+        if server == ws.cell(row=1, column=i).value:
+            new_app = ws.cell(row=CONST_APP_UPDATE, column=i).value
+    return new_app
+
+######################
+# SHEET: appserver
+######################
+
+def get_as_dev_eui(datafile):
+    wb, ws = load_xl(datafile, CONST_SHEET_AS)
+    as_dev_euis = []
+    for i in range(2, ws.max_row +1):
+        as_dev_euis.append(str(ws.cell(row=i, column =CONST_AS_DEV_EUI_COL).value))
+    return as_dev_euis
+
+def get_as_app_eui(datafile):
+    wb, ws = load_xl(datafile, CONST_SHEET_AS)
+    return str(ws.cell(row=2, column=CONST_AS_APP_EUI_COL).value)
+
+def get_as_app_key(datafile):
+    wb, ws = load_xl(datafile, CONST_SHEET_AS)
+    return str(ws.cell(row=2, column=CONST_AS_APP_KEY_COL).value)
+
+def get_as_node_name(datafile):
+    wb, ws = load_xl(datafile, CONST_SHEET_AS)
+    return str(ws.cell(row=2, column=CONST_AS_NODE_NAME_COL).value)
+
+def get_as_url(datafile):
+    wb, ws = load_xl(datafile, CONST_SHEET_AS)
+    return str(ws.cell(row=2, column=CONST_AS_URL_COL).value)
+
+######################
+# SHEET: devices
+######################
+def get_devices_by_header(datafile, dev_hdr):
+    wb, ws = load_xl(datafile, CONST_SHEET_DEVICE)
+    devices = []
+    for i in range(1, ws.max_column + 1):
+        if dev_hdr == ws.cell(row=1, column=i).value:
+            for j in range(2, ws.max_row + 1):
+                if ws.cell(row=j, column=i).value is not None:
+                    devices.append(str(ws.cell(row=j, column=i).value))
+    return devices
+
 
 def get_commands_by_sheet(datafile, sheet):
     wb, ws = load_xl(datafile, sheet)
