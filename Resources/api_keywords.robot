@@ -15,8 +15,7 @@ Login And Return SessionID
     Set Global Variable    ${STARTTIME}
 
 Login And Check SessionID XLS
-    [Arguments]    ${testserver}
-    ${SessionID}    User Login XLS    ${testserver}
+    ${SessionID}    User Login XLS
     Set Global Variable    ${SessionID}
     ${STARTTIME}    Get UTC Time
     Set Global Variable    ${STARTTIME}
@@ -48,20 +47,20 @@ Get Response And Validate
     ${response}    Run Keyword If    ${response} != ${None}    Return From Keyword    ${response}
 
 Add Devices To FMS And Activate Devices
-    [Arguments]     ${testserver}    @{DEVICES_EID}
-    FMS Add Devices    ${testserver}    @{DEVICES_EID}
-    FMS Activate Devices    ${testserver}    @{DEVICES_EID}
+    [Arguments]    @{DEVICES_EID}
+    FMS Add Devices    @{DEVICES_EID}
+    FMS Activate Devices    @{DEVICES_EID}
 
 Delete APP And Remove Devices FROM FMS
-    [Arguments]     ${testserver}    @{DEVICES_EID}
-    FMS Device Remove App    ${testserver}    @{DEVICES_EID}
-    FMS Remove Devices    ${testserver}    @{DEVICES_EID}
+    [Arguments]    @{DEVICES_EID}
+    FMS Device Remove App    @{DEVICES_EID}
+    FMS Remove Devices    @{DEVICES_EID}
 
 Delete APP And Install New App
-    [Arguments]     ${testserver}    @{DEVICES_EID}
-    FMS Device Remove App    ${testserver}    @{DEVICES_EID}
-    FMS Device Update App    ${testserver}    @{DEVICES_EID}
-    FMS Activate Devices    ${testserver}    @{DEVICES_EID}
+    [Arguments]    @{DEVICES_EID}
+    FMS Device Remove App    @{DEVICES_EID}
+    FMS Device Update App    @{DEVICES_EID}
+    FMS Activate Devices     @{DEVICES_EID}
 
 
 

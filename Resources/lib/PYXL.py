@@ -15,6 +15,7 @@ CONST_USER              = 7
 CONST_PASSWORD          = 8
 CONST_SESSION_ID        = 9
 CONST_APP_UPDATE        = 10
+CONST_AS_SERVER_URL     = 11
 
 CONST_SHEET_AS          = 'appserver'
 CONST_AS_DEV_EUI_COL    = 1
@@ -39,6 +40,7 @@ def load_xl(datafile, sheet):
 ######################
 def get_url_by_header(datafile, server):
     wb, ws = load_xl(datafile, CONST_SHEET_ENV)
+    
     for i in range(1, ws.max_column + 1):
         if server == ws.cell(row=1, column=i).value:
             url = ws.cell(row=CONST_FMS_URL, column=i).value
@@ -99,10 +101,10 @@ def set_session_by_header(datafile, server):
     username = get_user_by_header(datafile, server)
     password  = get_password_by_header(datafile, server)
     sessionid = get_session_by_header(datafile, server)
-
+    owd = os.getcwd()
+    os.chdir('../Resources/testdata')
     userLoginRequest = urlRequest + '/login'
     dataValues       = {"username":username, "password":password}
-
     if len(sessionid) != 32:
         response         = requests.post(url=userLoginRequest,data=dataValues)
         jsonReply        = json.loads(response.text)
@@ -111,11 +113,13 @@ def set_session_by_header(datafile, server):
         if retStatus == 'ok':
             retSessionID     = jsonReply['sessionid'].encode('utf-8')
             for i in range(1, ws.max_column + 1):
-                if header == ws.cell(row=1, column=i).value:
+                if server == ws.cell(row=1, column=i).value:
                     ws.cell(row=CONST_SESSION_ID, column=i).value = retSessionID
                     wb.save(datafile)
+                    os.chdir(owd)
                     return retSessionID
         else:
+            os.chdir(owd)
             return None
     else:
         checkLoginRequest = urlRequest + '/checklogin'
@@ -125,6 +129,7 @@ def set_session_by_header(datafile, server):
         retStatus         = jsonReply['response'].encode('utf-8')
 
         if retStatus == 'ok':
+            os.chdir(owd)
             return sessionid
         else:
             dataValues       = {"username":username, "password":password}
@@ -134,11 +139,13 @@ def set_session_by_header(datafile, server):
             if retStatus == 'ok':
                 retSessionID     = jsonReply['sessionid'].encode('utf-8')
                 for i in range(1, ws.max_column + 1):
-                    if header == ws.cell(row=1, column=i).value:
+                    if server == ws.cell(row=1, column=i).value:
                         ws.cell(row=CONST_SESSION_ID, column=i).value = retSessionID
                         wb.save(datafile)
+                        os.chdir(owd)
                         return retSessionID
             else:
+                os.chdir(owd)
                 return None
 
 def get_app_update_version(datafile, server):
@@ -147,6 +154,13 @@ def get_app_update_version(datafile, server):
         if server == ws.cell(row=1, column=i).value:
             new_app = ws.cell(row=CONST_APP_UPDATE, column=i).value
     return new_app
+
+def get_as_server_url(datafile, server):
+    wb, ws = load_xl(datafile, CONST_SHEET_ENV)
+    for i in range(1, ws.max_column + 1):
+        if server == ws.cell(row=1, column=i).value:
+            as_server_url = ws.cell(row=CONST_AS_SERVER_URL, column=i).value
+    return as_server_url
 
 ######################
 # SHEET: appserver
@@ -171,9 +185,6 @@ def get_as_node_name(datafile):
     wb, ws = load_xl(datafile, CONST_SHEET_AS)
     return str(ws.cell(row=2, column=CONST_AS_NODE_NAME_COL).value)
 
-def get_as_url(datafile):
-    wb, ws = load_xl(datafile, CONST_SHEET_AS)
-    return str(ws.cell(row=2, column=CONST_AS_URL_COL).value)
 
 ######################
 # SHEET: devices

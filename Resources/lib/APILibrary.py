@@ -14,14 +14,14 @@ class APILibrary():
 
     VERSION = 1.0
 
-    g_testfile = None
-
-    def __init__(self, testfile=None):
-        global g_testfile
-        global g_testserver
+    def __init__(self, testfile=None, testserver=None):
+ 
         
-        if testfile is not None:
+        if testfile is not None and testserver is not None:
+            global g_testfile
+            global g_testserver
             g_testfile = testfile
+            g_testserver = testserver
 
     def getUTCTime(self):
         now = datetime.utcnow()
@@ -157,8 +157,8 @@ class APILibrary():
                     BuiltIn().log_to_console('*** Login Failed. ***')
                     return None
 
-    def userLoginXLS(self, server):
-        session = PYXL.set_session_by_header(g_testfile, server)
+    def userLoginXLS(self):
+        session = PYXL.set_session_by_header(g_testfile, g_testserver)
         return session
 
     ########################################
@@ -195,8 +195,7 @@ class APILibrary():
                 jsonReply[obj]['status'] is None
                 ):
                 devices.append(jsonReply[obj]['eid'].encode('utf-8'))
-
-        
+        BuiltIn().log_to_console("")
         BuiltIn().log_to_console("Available Devices = " + str(devices))
         return devices
 
@@ -295,20 +294,20 @@ class APILibrary():
 
     ########################################
     ###   5 Brocaar Application Server   ###
-
     ########################################
     def addNodesToAS(self):
+
         dev_euis    = PYXL.get_as_dev_eui(g_testfile)
         app_eui     = PYXL.get_as_app_eui(g_testfile)
         app_key     = PYXL.get_as_app_key(g_testfile)
         node_name   = PYXL.get_as_node_name(g_testfile)
-        as_url      = PYXL.get_as_url(g_testfile)
+        as_url      = PYXL.get_as_server_url(g_testfile, g_testserver)
 
         requestAPI  = as_url + '/api/node'
         headers     = {'Grpc-Metadata-Authorization': 'ghydOwk7fX9XVX+Ssm4Doif+RRC83NP5DVeX8jvh5J0=', 'Content-Type': 'application/json'}
         BuiltIn().log_to_console(" ")
         for i in range (0, len(dev_euis)):
-            if len(dev_euis[i]) == 16:
+            if len(dev_euis[i]) == 16 and dev_euis is not None:
                 dataValues  = {
                       "devEUI": str(dev_euis[i]),
                       "appEUI": str(app_eui),
@@ -329,14 +328,14 @@ class APILibrary():
                 else:
                     BuiltIn().log_to_console("Device " + str(dev_euis[i]) + " failed to be added to Application Server.")
             else:
-                BuiltIn().log_to_console("Length of Device EUI is incorrect:  " + str(dev_euis[i]) + " failed to be added to Application Server.")
+                BuiltIn().log_to_console("Length of Device EUI is incorrect or equals None: -> " + str(dev_euis[i]) + " <- failed to be added to Application Server.")
 
     def deleteNodesFromAS(self):
         dev_euis    = PYXL.get_as_dev_eui(g_testfile)
-        as_url      = PYXL.get_as_url(g_testfile)
+        as_url      = PYXL.get_as_server_url(g_testfile, g_testserver)
         BuiltIn().log_to_console(" ")
         for i in range (0, len(dev_euis)):
-            if len(dev_euis[i]) == 16:
+            if len(dev_euis[i]) == 16 and dev_euis is not None:
                 requestAPI  = as_url + '/api/node' + '/' + str(dev_euis[i])
                 response = requests.delete(url=requestAPI, verify=False)
                 # BuiltIn().log_to_console("Delete Device " + str(dev_euis[i]) + " -> " + str(response.reason))
@@ -345,33 +344,24 @@ class APILibrary():
                 else:
                     BuiltIn().log_to_console("Device " + str(dev_euis[i]) + " failed to be removed from Application Server.")
             else:
-                BuiltIn().log_to_console("Length of Device EUI is incorrect:  " + str(dev_euis[i]) + " failed to be removed from Application Server.")
+                BuiltIn().log_to_console("Length of Device EUI is incorrect or equals None: -> " + str(dev_euis[i]) + " <- failed to be removed from Application Server.")
 
     ########################################
     ###   6 FMS   ###
     ########################################
 
     # def fmsAddDevices(self, urlRequest, session, gw_eid, app_bundle, dev_type, *dev_eid):
-    def fmsAddDevices(self, testServer, dev_header):
-        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
+    def fmsAddDevices(self, dev_header):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
         fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
-        session     = PYXL.get_session_by_header(g_testfile, testServer)
-        gw_eid      = PYXL.get_gw_by_header(g_testfile, testServer)
-        dev_type    = PYXL.get_dev_type_by_header(g_testfile, testServer)
-        app_bdl_yl  = PYXL.get_app_bdl_yl_by_header(g_testfile, testServer)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
+        gw_eid      = PYXL.get_gw_by_header(g_testfile, g_testserver)
+        dev_type    = PYXL.get_dev_type_by_header(g_testfile, g_testserver)
+        app_bdl_yl  = PYXL.get_app_bdl_yl_by_header(g_testfile, g_testserver)
         app_bundle  = app_bdl_yl
-        # app_bdl_mc  = PYXL.get_app_bdl_mc_by_header(g_testfile, testServer)
-        # BuiltIn().log_to_console(urlRequest)
-        # BuiltIn().log_to_console(str(fms_devices))
-        # BuiltIn().log_to_console(str(session))
-        # BuiltIn().log_to_console(str(gw_eid))
-        # BuiltIn().log_to_console(str(dev_type))
-        # BuiltIn().log_to_console(str(app_bdl_yl))
-        # BuiltIn().log_to_console(str(app_bdl_mc))
 
         requestAPI = urlRequest + '/addDevice'
         avb_devices = self.getDevices(urlRequest, session)
-        BuiltIn().log_to_console(" ")
         for i in range (0, len(fms_devices)):
             if len(fms_devices[i]) == 16 and fms_devices[i] not in avb_devices:
                 dataValues       = { 
@@ -384,17 +374,17 @@ class APILibrary():
                 response         = requests.post(url=requestAPI, data=dataValues)
                 jsonReply        = json.loads(response.text)
             else:
+                BuiltIn().log_to_console("")
                 BuiltIn().log_to_console("fmsAddDevices: " + fms_devices[i] + " Length of Device EUI is incorrect OR Device already existing!")
 
-    def fmsActivateDevices(self, testServer, dev_header):
-        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
-        session     = PYXL.get_session_by_header(g_testfile, testServer)
+    def fmsActivateDevices(self, dev_header):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
         fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
-        gw_eid      = PYXL.get_gw_by_header(g_testfile, testServer)
+        gw_eid      = PYXL.get_gw_by_header(g_testfile, g_testserver)
         requestAPI  = urlRequest + '/gatewayActivateDevice'
         avb_devices = self.getDevices(urlRequest, session)
 
-        BuiltIn().log_to_console(" ")
         for i in range (0, len(fms_devices)):
             if len(fms_devices[i]) == 16 and fms_devices[i] in avb_devices:
                 dataValues       = { 
@@ -404,13 +394,15 @@ class APILibrary():
                     }
                 response         = requests.post(url=requestAPI, data=dataValues)
                 jsonReply        = json.loads(response.text)
+                BuiltIn().log_to_console(" ")
                 BuiltIn().log_to_console(jsonReply)
             else:
+                BuiltIn().log_to_console(" ")
                 BuiltIn().log_to_console("fmsActivateDevices: " + fms_devices[i] + " Length of Device EUI is incorrect AND Device to be activated is not existing!")
 
-    def fmsDeviceRemoveApp(self, testServer, dev_header):
-        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
-        session     = PYXL.get_session_by_header(g_testfile, testServer)
+    def fmsDeviceRemoveApp(self, dev_header):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
         fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
         requestAPI  = urlRequest + '/deviceRemoveApp'
         avb_devices = self.getDevices(urlRequest, session)
@@ -428,10 +420,10 @@ class APILibrary():
             else:
                 BuiltIn().log_to_console("fmsDeviceRemoveApp: Length of Device EUI is incorrect AND Device to be removed is not existing!")
 
-    def fmsDeviceUpdateApp(self, testServer, dev_header):
-        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
-        session     = PYXL.get_session_by_header(g_testfile, testServer)
-        new_app     = PYXL.get_app_update_version(g_testfile, testServer)
+    def fmsDeviceUpdateApp(self, dev_header):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
+        new_app     = PYXL.get_app_update_version(g_testfile, g_testserver)
         fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
 
         requestAPI = urlRequest + '/setDevice'
@@ -452,9 +444,9 @@ class APILibrary():
                 BuiltIn().log_to_console("fmsDeviceUpdateApp: Length of Device EUI is incorrect AND Device to be removed is not existing!")
 
 
-    def fmsRemoveDevices(self, testServer, dev_header):
-        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
-        session     = PYXL.get_session_by_header(g_testfile, testServer)
+    def fmsRemoveDevices(self, dev_header):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
         fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
         requestAPI_setDevice     = urlRequest + '/setDevice'
         requestAPI_removeDevice  = urlRequest + '/removeDevice'
@@ -487,10 +479,10 @@ class APILibrary():
             else:
                 BuiltIn().log_to_console("fmsRemoveDevices(2nd Step): Length of Device EUI is incorrect AND Device to be removed is not existing!")
 
-    def deviceSendInitCommand(self, testServer, dev_header, command):
+    def deviceSendInitCommand(self, dev_header, command):
 
-        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
-        session     = PYXL.get_session_by_header(g_testfile, testServer)
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
         fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
         cookie = {"sessionid":session}
 
@@ -507,10 +499,10 @@ class APILibrary():
                 eid_cid.update({str(dev) : str(jsonReply['cid'])})
         return eid_cid
 
-    def ValidateInitCommand(self, testServer, command, **eid_cid):
+    def ValidateInitCommand(self, command, **eid_cid):
 
-        urlRequest  = PYXL.get_url_by_header(g_testfile, testServer)
-        session     = PYXL.get_session_by_header(g_testfile, testServer)
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
         cookie = {"sessionid":session}
 
         requestAPI = urlRequest + '/getTransactions'
