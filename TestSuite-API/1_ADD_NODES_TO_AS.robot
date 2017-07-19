@@ -1,5 +1,5 @@
 *** Settings ***
-Library     APILibrary    test.xlsx
+Library     APILibrary    TestData.xlsx    MARK SERVER
 Resource    ../../Resources/api_keywords.robot
 Resource    ../../Resources/api_variables.robot
 
