@@ -25,6 +25,7 @@ CONST_AS_NODE_NAME_COL  = 4
 CONST_AS_URL_COL        = 5
 
 CONST_SHEET_DEVICE      = 'devices'
+CONST_METER_SERIAL      = 1
 
 def load_xl(datafile, sheet):
     owd = os.getcwd()
@@ -185,7 +186,6 @@ def get_as_node_name(datafile):
     wb, ws = load_xl(datafile, CONST_SHEET_AS)
     return str(ws.cell(row=2, column=CONST_AS_NODE_NAME_COL).value)
 
-
 ######################
 # SHEET: devices
 ######################
@@ -199,6 +199,9 @@ def get_devices_by_header(datafile, dev_hdr):
                     devices.append(str(ws.cell(row=j, column=i).value))
     return devices
 
+def get_meter_serial(datafile):
+    wb, ws = load_xl(datafile, CONST_SHEET_DEVICE)
+    return str(ws.cell(row=1, column=CONST_METER_SERIAL).value)
 
 def get_commands_by_sheet(datafile, sheet):
     wb, ws = load_xl(datafile, sheet)
@@ -211,7 +214,10 @@ def get_commands_by_sheet(datafile, sheet):
         commands.append(temp_list)
     return commands
 
-
+######################
+# Workbook: daliy read
+# Sheet:    History
+######################
 
 
 # def get_environment(env):

@@ -4,8 +4,9 @@ Resource    ../../Resources/api_keywords.robot
 Resource    ../../Resources/api_variables.robot
 
 *** Variables ***
-# ${devices}        YL EID
+
 *** Test Cases ***
-Add Devices To FMS
+SET_PRESSURE_INTERVAL
     Login And Check SessionID XLS
-    Add Devices To FMS And Activate Devices    #${devices}
+    &{EID_CID}   Device Send Command    SET_PRESSURE_REPORT_INTERVAL    report_interval_mins=1440
+    Validate Init Command    SET_PRESSURE_REPORT_INTERVAL    &{EID_CID}

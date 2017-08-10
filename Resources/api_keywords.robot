@@ -20,11 +20,10 @@ Login And Check SessionID XLS
     ${STARTTIME}    Get UTC Time
     Set Global Variable    ${STARTTIME}
 
-Get Online Devices Info
-    [Arguments]    ${url}=${FMS_URL}    ${session}=${SessionID}
-    ${len}    Get Length    @{Devices}
-    @{Devices}    Run Keyword If     ${len} == 0    Get All Online Devices    ${url}    ${session}
-    Run Keyword If     ${len} == 0     Set Global Variable    @{Devices}
+# Get Online Devices Info
+#     ${len}    Get Length    @{Devices}
+#     @{Devices}    Run Keyword If     ${len} == 0    Get All Online Devices    ${url}    ${session}
+#     Run Keyword If     ${len} == 0     Set Global Variable    @{Devices}
 
 Send Command To Device And Return CID
     [Arguments]    ${url}=${FMS_URL}    ${session}=${SessionID}    ${command}=${EMPTY}    ${eid}=${EMPTY}    ${params}=${EMPTY}
@@ -47,20 +46,23 @@ Get Response And Validate
     ${response}    Run Keyword If    ${response} != ${None}    Return From Keyword    ${response}
 
 Add Devices To FMS And Activate Devices
-    [Arguments]    @{DEVICES_EID}
-    FMS Add Devices    @{DEVICES_EID}
-    FMS Activate Devices    @{DEVICES_EID}
+    # [Arguments]    @{DEVICES_EID}
+    FMS Add Devices    #@{DEVICES_EID}
+    FMS Activate Devices    #@{DEVICES_EID}
 
 Delete APP And Remove Devices FROM FMS
-    [Arguments]    @{DEVICES_EID}
-    FMS Device Remove App    @{DEVICES_EID}
-    FMS Remove Devices    @{DEVICES_EID}
+    # [Arguments]    @{DEVICES_EID}
+    FMS Device Remove App    #@{DEVICES_EID}
+    FMS Remove Devices    #@{DEVICES_EID}
 
 Delete APP And Install New App
-    [Arguments]    @{DEVICES_EID}
-    FMS Device Remove App    @{DEVICES_EID}
-    FMS Device Update App    @{DEVICES_EID}
-    FMS Activate Devices     @{DEVICES_EID}
+    # [Arguments]    @{DEVICES_EID}
+    FMS Device Remove App    #@{DEVICES_EID}
+    FMS Device Update App    #@{DEVICES_EID}
+    FMS Activate Devices     #@{DEVICES_EID}
+
+Edit Meter Serial Number To FMS
+    FMS Edit Devices
 
 
 

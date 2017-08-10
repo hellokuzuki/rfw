@@ -4,8 +4,9 @@ Resource    ../../Resources/api_keywords.robot
 Resource    ../../Resources/api_variables.robot
 
 *** Variables ***
-# ${devices}        YL EID
+
 *** Test Cases ***
-Add Devices To FMS
+SEND_SUMMATION_COMMAND_TO_ALL_DEVICES
     Login And Check SessionID XLS
-    Add Devices To FMS And Activate Devices    #${devices}
+    &{EID_CID}   Device Send Init Command    GET_METER_SUMMATION_DELIVERED
+    Validate Init Command    GET_METER_SUMMATION_DELIVERED    &{EID_CID}

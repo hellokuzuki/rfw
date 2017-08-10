@@ -4,8 +4,11 @@ Resource    ../../Resources/api_keywords.robot
 Resource    ../../Resources/api_variables.robot
 
 *** Variables ***
-# ${devices}        YL EID
+
 *** Test Cases ***
-Add Devices To FMS
+GET DAILY READ
     Login And Check SessionID XLS
-    Add Devices To FMS And Activate Devices    #${devices}
+    @{total_online_devices}    ${totoal_online_number}    Get All Online Devices
+    Log To Console    ${totoal_online_number}
+    ${Yesterday}    Get Yesterday Date
+    Log To Console    ${Yesterday}

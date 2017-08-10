@@ -4,9 +4,9 @@ Resource    ../../Resources/api_keywords.robot
 Resource    ../../Resources/api_variables.robot
 
 *** Variables ***
-${devices}        YL EID
+# ${devices}        YL EID
 
 *** Test Cases ***
-Delete Devices From FMS
+UPDATE_APP_FROM_FMS
     Login And Check SessionID XLS
-    Delete APP And Install New App    ${devices}
+    Delete APP And Install New App    #${devices}
