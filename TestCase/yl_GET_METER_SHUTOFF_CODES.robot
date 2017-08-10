@@ -3,7 +3,7 @@ Resource            ../Resources/keywords.robot
 Resource            ../Resources/variables.robot
 Library             ../Resources/validationLib.py
 
-Suite Setup         Run Test Suite Setup Process    ${FMS_URL}    FireFox    ${USERNAME}    ${PASSWORD}
+Suite Setup         Run Test Suite Setup Process    ${FMS_URL}    chrome    ${USERNAME}    ${PASSWORD}
 Suite Teardown      Run Test Suite Teardown Process
 Test Teardown       Run Test Case Teardown Process
 
@@ -12,7 +12,7 @@ ${FMS_URL}          http://10.10.10.125:83  #http://mwlora-admin.test.freestylei
 ${USERNAME}         freestyle
 ${PASSWORD}         freestyle
 
-${eid}              7ff9011202000003
+${eid}              7ff9011202000004
 ${gw}               990200000000269f
 
 
