@@ -1,5 +1,5 @@
 *** Settings ***
-Resource    poet_elements.robot
+Resource    elements.robot
 
 *** Variables ***
 #Browser
