@@ -7,4 +7,6 @@
 /Resources/lib/*.pyc
 /TestSuite-Jenkins/temp/*
 /TestSuite-Jenkins/test/*
+/TestSuit-POET/temp
 *.png
+
