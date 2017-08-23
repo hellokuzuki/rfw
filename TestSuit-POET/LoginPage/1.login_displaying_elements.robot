@@ -24,7 +24,8 @@ Validate Freestyle Logo Position
 Validate Signin Entry Box Position
     [Documentation]    Sign in entry box is centred on Screen
     ${Center}    Get Horizontal Position    ${LOC_LOGIN_PANEL}
-    Should Be True    ${Center} == ${CENT_1920}
+    Should Be True    ${Center} > ${CENT_1920_MIN}
+    Should Be True    ${Center} < ${CENT_1920_MAX}
 
 Validate Username And Password Default Value
     [Documentation]    Username & Password entry boxes are empty

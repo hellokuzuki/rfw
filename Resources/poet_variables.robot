@@ -9,7 +9,8 @@ ${POET_URL}               http://systest.poet.freestyleiot.com
 # http://systest.poet.freestyleiot.com/login
 ${SCREEN_X}               1920
 ${SCREEN_Y}               1080
-${CENT_1920}              729
+${CENT_1920_MIN}          700
+${CENT_1920_MAX}          750
 
 #Login Page
 ${TITLE}                  Poet | Freestyle Technologies
