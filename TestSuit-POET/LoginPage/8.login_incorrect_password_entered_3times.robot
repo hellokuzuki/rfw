@@ -13,5 +13,5 @@ Validate Alert Message of Account Locked
     \    Input Text    ${INPUT_USERNAME}    ${TEST_LOCKED_ID}
     \    Input Text    ${INPUT_PASSWORD}    ${PASSWORD}
     \    Click Button   ${BTN_SIGNIN}
-    \    Sleep    3s
+    \    Wait Until Element Is Visible    ${ALERT_FIELD}
     Element Text Should Be    ${ALERT_FIELD}    ${ALERT_ACC_LOCKED_1}

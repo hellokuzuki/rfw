@@ -10,7 +10,12 @@ Run Test Suite Setup Process
     Set Window Size    ${SCREEN_X}    ${SCREEN_Y}
     Log    *************** Test Suite Setup process completed. ***************
 
-
 Run Test Suite TearDown Process
     [Documentation]    Poet Close Browser Process.
     Close Browser
+
+Run Login Process
+    [Documentation]    The Poet login process
+    Input Text    ${INPUT_USERNAME}    ${USERNAME}
+    Input Text    ${INPUT_PASSWORD}    ${PASSWORD}
+    Click Button   ${BTN_SIGNIN}

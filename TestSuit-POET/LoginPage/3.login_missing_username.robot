@@ -7,16 +7,23 @@ Suite Teardown    Close Browser
 *** Variables ***
 
 *** Test Cases ***
+# Current behaviour and will be changed
+# Validate Alert Message of Missing Username
+#     [Documentation]    "Username field is empty" text is displayed in dialog box
+#     Input Text    ${INPUT_PASSWORD}    ${PASSWORD}
+#     Click Button   ${BTN_SIGNIN}
+#     ${alert}    Get Alert Message
+#     Should Be Equal    ${alert}    ${ALERT_NO_USERNAME}
+
+# Validate Alert Dismissal
+#     [Documentation]    Click OK removes dialog box allowing for entry of Username and Password
+#     Input Text    ${INPUT_PASSWORD}    ${PASSWORD}
+#     Click Button   ${BTN_SIGNIN}
+#     Dismiss Alert
+
 Validate Alert Message of Missing Username
     [Documentation]    "Username field is empty" text is displayed in dialog box
     Input Text    ${INPUT_PASSWORD}    ${PASSWORD}
     Click Button   ${BTN_SIGNIN}
-    ${alert}    Get Alert Message
-    Should Be Equal    ${alert}    ${ALERT_NO_USERNAME}
-
-Validate Alert Dismissal
-    [Documentation]    Click OK removes dialog box allowing for entry of Username and Password
-    Input Text    ${INPUT_PASSWORD}    ${PASSWORD}
-    Click Button   ${BTN_SIGNIN}
-    Dismiss Alert
-
+    Wait Until Element Is Visible    ${ALERT_FIELD}
+    Element Text Should Be    ${ALERT_FIELD}    ${ALERT_NO_USERNAME}

@@ -15,5 +15,4 @@ Validate Logout Successful
 
     Click Element    ${PROFILE_DROPDOWN}
     Click Element    ${SIGNOUT}
-    Sleep    3s
     Location Should Contain    ${POET_URL}

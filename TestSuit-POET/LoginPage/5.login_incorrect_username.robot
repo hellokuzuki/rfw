@@ -12,5 +12,5 @@ Validate Alert Message of Incorrect Username
     Input Text    ${INPUT_USERNAME}    ${INVALID_ID}
     Input Text    ${INPUT_PASSWORD}    ${PASSWORD}
     Click Button   ${BTN_SIGNIN}
-    Sleep    3s
+    Wait Until Element Is Visible    ${ALERT_FIELD}
     Element Text Should Be    ${ALERT_FIELD}    ${ALERT_INVALID_CREDENTIAL}
