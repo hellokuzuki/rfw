@@ -59,8 +59,8 @@ class LoraLibrary():
             status = self.validate_get_report_interval(data, state)
         elif command == 'SET_PRESSURE_REPORT_INTERVAL':
             status = self.validate_reponse_of_set_report_interval_command(data, state)
-        elif command == 'GET_METER_VERSION':
-            status = self.validate_get_meter_version_command(data, state)
+        elif command == 'GET_NIC_VERSION':
+            status = self.validate_get_nic_version_command(data, state)
         elif command == 'GET_OFLOW_DETECT_ENABLE':
             status = self.validate_get_oflow_detect_enable(data, state)
         elif command == 'SET_OFLOW_DETECT_ENABLE':
@@ -131,6 +131,12 @@ class LoraLibrary():
             status = self.validate_reponse_of_set_command(data)
         elif command == 'GET_PROTOCOL_VERSION':
             status = self.validate_get_protocol_version_command(data)
+        elif command == 'GET_NIC_TIME':
+            status = self.validate_get_nic_time_command(data)
+        elif command == 'GET_NIC_SCHEDULE':
+            status = self.validate_get_nic_schedule_command(data, state)
+        elif command == 'SET_NIC_SCHEDULE':
+            status = self.validate_reponse_of_set_command(data)
         else:
             BuiltIn().log_to_console("Command was not supported.")
         return status
@@ -344,7 +350,7 @@ class LoraLibrary():
             BuiltIn().log("Response contains incorrect value!", "ERROR")
             return False
 
-    def validate_get_meter_version_command(self, response, state):
+    def validate_get_nic_version_command(self, response, state):
 
         elements = {"result_code","nic_application_version", "nic_bootloader_version"}
         self.print_response_data(response, *elements)
@@ -1023,3 +1029,80 @@ class LoraLibrary():
         else:
             BuiltIn().log("Response contains incorrect value!", "ERROR")
         return False
+
+    def validate_get_nic_time_command(self, response):
+
+        elements = {"result_code", "nic_time"}
+        self.print_response_data(response, *elements)
+
+        if  (
+                'result_code' not in response or
+                'nic_time' not in response
+            ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+            elif len(str(response['nic_time'])) == 10:
+                BuiltIn().log("Validation Successful!", "INFO")
+                return True
+            else:
+                BuiltIn().log("Unexpected status happened.", "WARN")
+                return False
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_nic_schedule_command(self, response, state):
+
+        state_para_1 = state[0].rsplit('=',1)[1]
+        state_para_2 = state[1].rsplit('=',1)[1]
+        state_para_3 = state[2].rsplit('=',1)[1]
+        state_para_4 = state[3].rsplit('=',1)[1]
+
+        print 'state_para_1 = ' + str(state_para_1)
+        print 'state_para_2 = ' + str(state_para_2)
+        print 'state_para_3 = ' + str(state_para_3) 
+
+        elements = {"result_code","day_mask", "active_period_start_time", "active_period_end_time", "modes"}
+        self.print_response_data(response, *elements)
+
+        if  (
+                'result_code' not in response or
+                'day_mask' not in response or
+                'active_period_start_time' not in response or
+                'active_period_end_time' not in response or
+                'modes' not in response
+            ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+            elif response['result_code'] == 8:
+                BuiltIn().log("Result_code = 8, Unknon Meter State has been returned!", "WARN")
+                return True
+            elif state is None:
+                BuiltIn().log("pilot_light_mode stats was not validated.", "INFO")
+                return True
+            elif int(state_para_1) != response['day_mask']:
+                BuiltIn().log("Incorrect day_mask value has been returned!", "ERROR")
+                return False
+            elif int(state_para_2) != response['active_period_start_time']:
+                BuiltIn().log("Incorrect active_period_start_time value has been returned!", "ERROR")
+                return False
+            elif int(state_para_3) != response['active_period_end_time']:
+                BuiltIn().log("Incorrect active_period_end_time value has been returned!", "ERROR")
+                return False
+            elif int(state_para_4) != response['modes']:
+                BuiltIn().log("Incorrect modes value has been returned!", "ERROR")
+                return False
+            else:
+                BuiltIn().log("Validation Successful.", "INFO")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
