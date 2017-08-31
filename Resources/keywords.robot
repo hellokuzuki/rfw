@@ -127,8 +127,9 @@ Wait And Validate Response Of Command
     ${cid}    Get CID Of Issued Command    ${command}
     ${res}    Get Response Of Issued Command    ${cid}    ${command}
     ${status}    Validate Command    ${res}    ${command}    ${state}
-    Run Keyword If    '${status}' == 'False'    Log     Validation Failed.    WARN
     Go To Main Page
+    Run Keyword If    '${status}' == 'False'    Log     Validation Failed.    WARN
+    Run Keyword If    '${status}' == 'False'    Fail     Validation Failed.
 
 Filter Records With EID
     [Arguments]    ${eid}
