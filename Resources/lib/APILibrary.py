@@ -9,7 +9,6 @@ from robot.libraries.BuiltIn import BuiltIn
 from robot.api import logger
 from openpyxl import load_workbook
 
-
 class APILibrary():
 
     VERSION = 1.0
@@ -188,13 +187,16 @@ class APILibrary():
             BuiltIn().log_to_console(dev)
         return devices, len(devices)
 
-    def getDevices(self, urlRequest, session):
+    def getDevices(self):
 
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
         devices = []
         userLoginRequest = urlRequest + '/getDeviceInfo'
         dataValues       = {"sessionid":session}
         response         = requests.post(url=userLoginRequest,data=dataValues)
         jsonReply        = json.loads(response.text)
+
         for obj in range(0, len(jsonReply)):
             if (
                 jsonReply[obj]['status'] == 'Online' or
@@ -205,8 +207,9 @@ class APILibrary():
                 ):
                 devices.append(jsonReply[obj]['eid'].encode('utf-8'))
         BuiltIn().log_to_console("")
-        BuiltIn().log_to_console("Available Devices = " + str(devices))
-        return devices
+        for dev in devices:
+            BuiltIn().log_to_console(dev)
+        return devices, len(devices)
 
     ########################################
     ###   3 Send Command To Device       ###
@@ -612,4 +615,110 @@ class APILibrary():
         BuiltIn().log(" **** Timed out response Found! ****", "ERROR")
         BuiltIn().log_to_console(" **** Timed out response Found! ****" + str(eid_cid))
         return eid_cid
+
+    def report_daily_reading(self):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
+        cookie = {"sessionid":session}
+        requestAPI = urlRequest + '/getTransactions'
+        command = "GET_METER_SUMMATION_DELIVERED"
+
+        before = date.today() - timedelta(1)
+        before = before.strftime('%y-%m-%d')
+        after = date.today() - timedelta(2)
+        after = after.strftime('%y-%m-%d')
+
+        period = str(after) + " ~ " +  str(before)
+        total_devices, total_devices_num = self.getDevices()
+        total_online_devices, total_online_devices_num = self.getAllOnlineDevices()
+        online_rate = int(total_online_devices_num)  * 1.0/ int(total_devices_num) * 1.00
+        online_rate = '{:.2%}'.format(online_rate)
+
+        devices_has_no_data = []
+        devices_has_data = []
+        devices_has_no_data_c = []
+        devices_has_data_c = []
+
+        #Get_METER_SUMMATION_DELIVERED with CID=0
+        for eid in total_online_devices :
+            dataValues = {"eid":str(eid), "qtype":"cid,command,status", "query":str(0) + "," + str(command) + "," + "Responded*", "after":str(after), "before":str(before)}
+            response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
+            jsonReply = json.loads(response.text)
+            if len(str(jsonReply['rows'])) > 2: #if there is no data, the length of rows key should be 2
+                devices_has_data.append(str(eid))
+                BuiltIn().log_to_console("devices has unsocilited data " + str(jsonReply['rows'][0]['serial']))
+            else:
+                devices_has_no_data.append(str(eid))
+                BuiltIn().log_to_console("devices has no unsocilited data " + str(eid))
+
+        sum_of_no_data = len(devices_has_no_data)
+        sum_of_data = len(devices_has_data)
+        reading_rate = int(sum_of_data)  * 1.0/ int(total_devices_num) * 1.00
+        reading_rate = '{:.2%}'.format(reading_rate)
+
+        #Send command
+        command_req = "GET_METER_GAS_VALVE_STATE"
+        requestAPI_req = urlRequest + '/DeviceSendCommand'
+        for eid in total_online_devices:
+            dataValues_req = {"eid":str(eid), "name":command_req}
+            response_req = requests.get(url=requestAPI_req, cookies=cookie, params=dataValues_req)
+            jsonReply_req = json.loads(response_req.text)
+            retStatus = jsonReply_req['response'].encode('utf-8')
+
+            if retStatus == 'ok':
+                BuiltIn().log_to_console("GET_METER_GAS_VALVE_STATE has been sent to " + str(eid))
+
+        #Get_METER_SUMMATION_DELIVERED with CID>0
+        for eid in total_online_devices :
+            dataValues = {"eid":str(eid), "qtype":"cid,command,status", "query":">0" + "," + str(command_req) + "," + "Responded*", "after":str(after), "before":str(before)}
+            response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
+            jsonReply = json.loads(response.text)
+            if len(str(jsonReply['rows'])) > 2: #if there is no data, the length of rows key should be 2
+                devices_has_data_c.append(str(eid))
+                BuiltIn().log_to_console("devices has scheduled data " + str(jsonReply['rows'][0]['serial']))
+            else:
+                devices_has_no_data_c.append(str(eid))
+
+                BuiltIn().log_to_console("devices has no scheduled data " + str(eid))
+
+        sum_of_no_data_c = len(devices_has_no_data_c)
+        sum_of_data_c = len(devices_has_data_c)
+        reading_rate_c = int(sum_of_data_c)  * 1.0/ int(total_devices_num) * 1.00
+        reading_rate_c = '{:.2%}'.format(reading_rate_c)
+
+        # BuiltIn().log_to_console("XXXXXXXXXXXXXXXXXXXXXXX")
+        # BuiltIn().log_to_console(str(period))
+        # BuiltIn().log_to_console(str(total_devices_num))
+        # BuiltIn().log_to_console(str(total_online_devices_num))
+        # BuiltIn().log_to_console(str(online_rate))
+        # BuiltIn().log_to_console(str(sum_of_no_data))
+        # BuiltIn().log_to_console(str(sum_of_data))
+        # BuiltIn().log_to_console(str(reading_rate))
+        # BuiltIn().log_to_console(str(sum_of_no_data_c))
+        # BuiltIn().log_to_console(str(sum_of_data_c))
+        # BuiltIn().log_to_console(str(reading_rate_c))        
+        # BuiltIn().log_to_console(str(devices_has_no_data))
+
+        row_data = []
+        row_data.append(str(period))
+        row_data.append(str(total_devices_num))
+        row_data.append(str(total_online_devices_num))
+        row_data.append(str(online_rate))
+        row_data.append(str(sum_of_no_data))
+        row_data.append(str(sum_of_data))
+        row_data.append(str(reading_rate))
+        row_data.append(str(sum_of_no_data_c))
+        row_data.append(str(sum_of_data_c))
+        row_data.append(str(reading_rate_c))
+        row_data.append(str(devices_has_no_data))
+
+        PYXL.append_to_report(g_testfile, *row_data)
+
+
+
+
+
+
+
+
 

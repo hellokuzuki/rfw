@@ -27,6 +27,12 @@ CONST_AS_URL_COL        = 5
 CONST_SHEET_DEVICE      = 'devices'
 CONST_METER_SERIAL      = 1
 
+CONST_SHEET_REPORT      = 'report'
+CONST_DATE_COL          = 1
+CONST_TOTAL_DEVICE_COL  = 2
+CONST_ONLINE_DEVICE_COL = 3
+CONST_ONLINE_RATE_COL   = 4
+
 def load_xl(datafile, sheet):
     owd = os.getcwd()
     os.chdir('../Resources/testdata')
@@ -220,5 +226,14 @@ def get_commands_by_sheet(datafile, sheet):
 ######################
 
 
-# def get_environment(env):
-        # BuiltIn().log_to_console("22222")
+######################
+# SHEET: reprot
+######################
+def append_to_report(datafile,*row_data):
+    wb, ws = load_xl(datafile, CONST_SHEET_REPORT)
+    owd = os.getcwd()
+    os.chdir('../Resources/testdata')
+    ws.append(row_data)
+    wb.save(datafile)
+    os.chdir(owd)
+    return True
