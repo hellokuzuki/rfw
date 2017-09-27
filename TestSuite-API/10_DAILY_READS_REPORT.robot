@@ -6,7 +6,7 @@ Resource    ../../Resources/api_variables.robot
 *** Variables ***
 
 *** Test Cases ***
-Send Init Command To Devices
+Demo
     Login And Check SessionID XLS
-    &{EID_CID}   Device Send Command    SET_PRESSURE_REPORT_INTERVAL    report_interval_mins=1440
-    Validate Init Command    SET_PRESSURE_REPORT_INTERVAL    &{EID_CID}
+    Report Daily Reading
+    Send Command To Online Devices    GET_SUMMATION_REPORT_INTERVAL
