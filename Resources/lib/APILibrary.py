@@ -29,10 +29,12 @@ class APILibrary():
     def convertTime(self, time):
         return datetime.strptime(time,'%Y-%m-%dT%H:%M:%S.%fZ')
 
-    def getYesterdayDate(self):
-        yesterday = date.today() - timedelta(1)
-        return yesterday.strftime('%d/%m/%y')
-
+    def get_time_period(self):
+        before = date.today() - timedelta(1)
+        before = before.strftime('%y-%m-%d')
+        after = date.today() - timedelta(2)
+        after = after.strftime('%y-%m-%d')
+        return before, after
 
     def createSessionFile(self):
         os.chdir('../Resources')
@@ -48,54 +50,6 @@ class APILibrary():
             BuiltIn().log(" **** Response validate Successful. ****", "INFO")
         else:
             BuiltIn().log(" **** Response validate Failed. ****", "ERROR")
-
-
-    def get_by_header(self, sheet, header):
-        # li = PYXL.get_devices_by_header(g_testfile, header)
-        # BuiltIn().log_to_console(str(li))
-
-        # url = PYXL.get_url_by_header(g_testfile, header)
-        # BuiltIn().log_to_console(str(url))
-
-        # user = PYXL.get_user_by_header(g_testfile, header)
-        # BuiltIn().log_to_console(str(user))
-
-        # pwd = PYXL.get_password_by_header(g_testfile, header)
-        # BuiltIn().log_to_console(str(pwd))
-
-        # session_new = PYXL.set_session_by_header(g_testfile, header)
-        # BuiltIn().log_to_console(str(session_new))
-
-        # commands = PYXL.get_commands_by_sheet(g_testfile, 'yl_command_test')
-        # BuiltIn().log_to_console(str(commands))
-
-        # cid = self.deviceSendCommands(header,'yl_command_test', "7ff9010202000006")
-        # BuiltIn().log_to_console(str(cid))
-        # for cmd in commands:
-        #     cmd_name, cmd_para = str(cmd[0]), str(cmd[1])
-        #     if cmd_para == "None":
-        #         dataValues = {"eid":devEID, "name":cmd_name}
-        #     else:
-        #         dataValues = {"eid":devEID, "name":cmd_name}
-        pass
-
-    def get_app_eui(self):
-        euis = PYXL.get_as_dev_eui(g_testfile)
-        BuiltIn().log_to_console(str(euis))
-
-        app_eui = PYXL.get_as_app_eui(g_testfile)
-        BuiltIn().log_to_console(str(app_eui))
-
-        app_key = PYXL.get_as_app_key(g_testfile)
-        BuiltIn().log_to_console(str(app_key))
-
-        node_name = PYXL.get_as_node_name(g_testfile)
-        BuiltIn().log_to_console(str(node_name))
-
-        as_url1 = PYXL.get_as_url(g_testfile)
-        BuiltIn().log_to_console(str(as_url1))
-
-
 
     ########################################
     ###   1 User Login                   ###
@@ -182,10 +136,10 @@ class APILibrary():
             if jsonReply[obj]['status'] == 'Online':
                 devices.append(jsonReply[obj]['eid'].encode('utf-8'))
 
-        BuiltIn().log_to_console("")
-        for dev in devices:
-            BuiltIn().log_to_console(dev)
-        return devices, len(devices)
+        # BuiltIn().log_to_console("******************** All Online Devices ********************")
+        # for dev in devices:
+        #     BuiltIn().log_to_console(dev)
+        return devices
 
     def getDevices(self):
 
@@ -207,9 +161,9 @@ class APILibrary():
                 ):
                 devices.append(jsonReply[obj]['eid'].encode('utf-8'))
         BuiltIn().log_to_console("")
-        for dev in devices:
-            BuiltIn().log_to_console(dev)
-        return devices, len(devices)
+        # for dev in devices:
+        #     BuiltIn().log_to_console(dev)
+        return devices
 
     ########################################
     ###   3 Send Command To Device       ###
@@ -616,106 +570,152 @@ class APILibrary():
         BuiltIn().log_to_console(" **** Timed out response Found! ****" + str(eid_cid))
         return eid_cid
 
+    ########################################
+    ###   7 REPORT   ###
+    ########################################
     def report_daily_reading(self):
+        before, after = self.get_time_period()
+        #1. Date Period
+        period = str(after) + " ~ " +  str(before)
+
+        #2. Total All Devices
+        total_devices = self.getDevices()
+        total_devices_num = len(total_devices)
+
+        #3. Total Online Devices
+        total_online_devices = self.getAllOnlineDevices()
+        total_online_devices_num = len(total_online_devices)
+
+        #4. Device Availablilty Rate
+        online_rate = int(total_online_devices_num)  * 1.0/ int(total_devices_num) * 1.00
+        online_rate = '{:.2%}'.format(online_rate)
+
+        #5. Unsolicited msg Received
+        has_data, has_no_data = self.get_unsocilited_response("GET_METER_SUMMATION_DELIVERED")
+        has_data_num = len(has_data)
+
+        #6. Unsolicited msg not Received
+        has_no_data_num = len(has_no_data)
+
+        #7. Unsolicited msg Received Rate
+        reading_rate = int(has_data_num)  * 1.0/ int(total_online_devices_num) * 1.00
+        reading_rate = '{:.2%}'.format(reading_rate)
+
+        #8. Scheduled msg not Reived
+        has_data_c, has_no_data_c = self.get_requested_response("GET_SUMMATION_REPORT_INTERVAL")
+        has_no_data_c_num = len(has_no_data_c)
+
+        #9. Scheduled msg Rceived
+        has_data_c_num = len(has_data_c)
+
+        #10. Scheduled msg Rate
+        reading_rate_c = int(has_data_c_num)  * 1.0/ int(total_online_devices_num) * 1.00
+        reading_rate_c = '{:.2%}'.format(reading_rate_c)
+
+        row_data = []
+        row_data.extend( [str(period), 
+            str(total_devices_num),
+            str(total_online_devices_num),
+            str(online_rate),
+            str(has_no_data_num),
+            str(has_data_num),
+            str(reading_rate),
+            str(has_no_data_c_num),
+            str(has_data_c_num),
+            str(reading_rate_c),
+            str(has_no_data), 
+            str(has_no_data_c)] )
+
+        BuiltIn().log_to_console(str(row_data))
+        PYXL.append_to_report("daily_reading_report.xlsx", *row_data)
+
+    def get_unsocilited_response(self, command):
+        #CID = 0
         urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
         session     = PYXL.get_session_by_header(g_testfile, g_testserver)
         cookie = {"sessionid":session}
         requestAPI = urlRequest + '/getTransactions'
-        command = "GET_METER_SUMMATION_DELIVERED"
 
-        before = date.today() - timedelta(1)
-        before = before.strftime('%y-%m-%d')
-        after = date.today() - timedelta(2)
-        after = after.strftime('%y-%m-%d')
+        devices = self.getAllOnlineDevices()
+        before, after = self.get_time_period()
 
-        period = str(after) + " ~ " +  str(before)
-        total_devices, total_devices_num = self.getDevices()
-        total_online_devices, total_online_devices_num = self.getAllOnlineDevices()
-        online_rate = int(total_online_devices_num)  * 1.0/ int(total_devices_num) * 1.00
-        online_rate = '{:.2%}'.format(online_rate)
+        has_no_data = []
+        has_data = []
 
-        devices_has_no_data = []
-        devices_has_data = []
-        devices_has_no_data_c = []
-        devices_has_data_c = []
-
-        #Get_METER_SUMMATION_DELIVERED with CID=0
-        for eid in total_online_devices :
+        for eid in devices :
             dataValues = {"eid":str(eid), "qtype":"cid,command,status", "query":str(0) + "," + str(command) + "," + "Responded*", "after":str(after), "before":str(before)}
             response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
             jsonReply = json.loads(response.text)
             if len(str(jsonReply['rows'])) > 2: #if there is no data, the length of rows key should be 2
-                devices_has_data.append(str(eid))
-                BuiltIn().log_to_console("devices has unsocilited data " + str(jsonReply['rows'][0]['serial']))
+                has_data.append(str(eid))
             else:
-                devices_has_no_data.append(str(eid))
-                BuiltIn().log_to_console("devices has no unsocilited data " + str(eid))
+                has_no_data.append(str(eid))
 
-        sum_of_no_data = len(devices_has_no_data)
-        sum_of_data = len(devices_has_data)
-        reading_rate = int(sum_of_data)  * 1.0/ int(total_devices_num) * 1.00
-        reading_rate = '{:.2%}'.format(reading_rate)
+        BuiltIn().log_to_console(str(after) + " ~ " +str(before) )
+        BuiltIn().log_to_console("\n*** Devices has no unsocilited list ***\n" + str(has_no_data))
+        BuiltIn().log_to_console("\n*** Devices has unsocilited list ***\n" + str(has_data))
+        return has_data, has_no_data
 
-        #Send command
-        command_req = "GET_METER_GAS_VALVE_STATE"
-        requestAPI_req = urlRequest + '/DeviceSendCommand'
-        for eid in total_online_devices:
-            dataValues_req = {"eid":str(eid), "name":command_req}
-            response_req = requests.get(url=requestAPI_req, cookies=cookie, params=dataValues_req)
-            jsonReply_req = json.loads(response_req.text)
-            retStatus = jsonReply_req['response'].encode('utf-8')
+    def get_requested_response(self, command):
+        #CID > 0
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
+        cookie = {"sessionid":session}
+        requestAPI = urlRequest + '/getTransactions'
 
-            if retStatus == 'ok':
-                BuiltIn().log_to_console("GET_METER_GAS_VALVE_STATE has been sent to " + str(eid))
+        devices = self.getAllOnlineDevices()
+        before, after = self.get_time_period()
 
-        #Get_METER_SUMMATION_DELIVERED with CID>0
-        for eid in total_online_devices :
-            dataValues = {"eid":str(eid), "qtype":"cid,command,status", "query":">0" + "," + str(command_req) + "," + "Responded*", "after":str(after), "before":str(before)}
+        has_no_data = []
+        has_data = []
+
+        for eid in devices :
+            dataValues = {"eid":str(eid), "qtype":"cid,command,status", "query":">0" + "," + str(command) + "," + "Responded*", "after":str(after), "before":str(before)}
             response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
             jsonReply = json.loads(response.text)
             if len(str(jsonReply['rows'])) > 2: #if there is no data, the length of rows key should be 2
-                devices_has_data_c.append(str(eid))
-                BuiltIn().log_to_console("devices has scheduled data " + str(jsonReply['rows'][0]['serial']))
+                has_data.append(str(eid))
             else:
-                devices_has_no_data_c.append(str(eid))
+                has_no_data.append(str(eid))
 
-                BuiltIn().log_to_console("devices has no scheduled data " + str(eid))
+        BuiltIn().log_to_console(str(after) + " ~ " +str(before) )
+        BuiltIn().log_to_console("\n*** Devices has no scheduled list ***\n" + str(has_no_data))
+        BuiltIn().log_to_console("\n*** Devices has scheduled list ***\n" + str(has_data))
+        return has_data, has_no_data
 
-        sum_of_no_data_c = len(devices_has_no_data_c)
-        sum_of_data_c = len(devices_has_data_c)
-        reading_rate_c = int(sum_of_data_c)  * 1.0/ int(total_devices_num) * 1.00
-        reading_rate_c = '{:.2%}'.format(reading_rate_c)
+    def send_command_to_online_devices(self, command, params=None):
+        urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
+        session     = PYXL.get_session_by_header(g_testfile, g_testserver)
+        cookie = {"sessionid":session}
+        requestAPI = urlRequest + '/DeviceSendCommand'
+        eid_cid = {}
 
-        # BuiltIn().log_to_console("XXXXXXXXXXXXXXXXXXXXXXX")
-        # BuiltIn().log_to_console(str(period))
-        # BuiltIn().log_to_console(str(total_devices_num))
-        # BuiltIn().log_to_console(str(total_online_devices_num))
-        # BuiltIn().log_to_console(str(online_rate))
-        # BuiltIn().log_to_console(str(sum_of_no_data))
-        # BuiltIn().log_to_console(str(sum_of_data))
-        # BuiltIn().log_to_console(str(reading_rate))
-        # BuiltIn().log_to_console(str(sum_of_no_data_c))
-        # BuiltIn().log_to_console(str(sum_of_data_c))
-        # BuiltIn().log_to_console(str(reading_rate_c))        
-        # BuiltIn().log_to_console(str(devices_has_no_data))
+        devices = self.getAllOnlineDevices()
 
-        row_data = []
-        row_data.append(str(period))
-        row_data.append(str(total_devices_num))
-        row_data.append(str(total_online_devices_num))
-        row_data.append(str(online_rate))
-        row_data.append(str(sum_of_no_data))
-        row_data.append(str(sum_of_data))
-        row_data.append(str(reading_rate))
-        row_data.append(str(sum_of_no_data_c))
-        row_data.append(str(sum_of_data_c))
-        row_data.append(str(reading_rate_c))
-        row_data.append(str(devices_has_no_data))
+        if params is not None and params != "":
+            
+            if params.count("=") == 1:
+                cmd_name = str(params).rsplit('=', 1)[0]
+                cmd_par = str(params).rsplit('=', 1)[1]
+        else:
+            cmd_name = None
+            cmd_par = None
 
-        PYXL.append_to_report(g_testfile, *row_data)
+        for eid in devices:
+            if cmd_name is not None and cmd_par is not None:
+                dataValues = {"eid":str(eid), "name":command, str(cmd_name): int(cmd_par)}
+            else:
+                dataValues = {"eid":str(eid), "name":command}
+            response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
+            jsonReply = json.loads(response.text)
+            retStatus = jsonReply['response'].encode('utf-8')
 
-
-
+            if retStatus == 'ok':
+                BuiltIn().log_to_console( command + " has been sent to " + str(eid))
+                eid_cid.update({str(eid) : str(jsonReply['cid'])})
+            else:
+                BuiltIn().log_to_console( command + " failed to sent to " + str(eid))       
+        return eid_cid
 
 
 

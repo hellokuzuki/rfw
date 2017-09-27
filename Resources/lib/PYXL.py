@@ -42,6 +42,15 @@ def load_xl(datafile, sheet):
     os.chdir(owd)
     return wb, ws
 
+def load_report_xl(datafile, sheet):
+    owd = os.getcwd()
+    os.chdir('./reports')
+    global wb_rep, ws_rep
+    wb_rep = load_workbook(filename=datafile)
+    ws_rep = wb.get_sheet_by_name(sheet)
+    os.chdir(owd)
+    return wb_rep, ws_rep
+
 ######################
 # SHEET: envionrment
 ######################
@@ -230,10 +239,10 @@ def get_commands_by_sheet(datafile, sheet):
 # SHEET: reprot
 ######################
 def append_to_report(datafile,*row_data):
-    wb, ws = load_xl(datafile, CONST_SHEET_REPORT)
     owd = os.getcwd()
-    os.chdir('../Resources/testdata')
-    ws.append(row_data)
-    wb.save(datafile)
+    os.chdir('./reports')
+    report_wb = load_workbook(filename = datafile)
+    sheet = report_wb['report']
+    sheet.append(row_data)
+    report_wb.save(datafile)
     os.chdir(owd)
-    return True
