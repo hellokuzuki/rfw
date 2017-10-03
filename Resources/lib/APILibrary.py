@@ -14,8 +14,6 @@ class APILibrary():
     VERSION = 1.0
 
     def __init__(self, testfile=None, testserver=None):
- 
-        
         if testfile is not None and testserver is not None:
             global g_testfile
             global g_testserver
@@ -29,10 +27,10 @@ class APILibrary():
     def convertTime(self, time):
         return datetime.strptime(time,'%Y-%m-%dT%H:%M:%S.%fZ')
 
-    def get_time_period(self):
-        before = date.today() - timedelta(1)
+    def get_time_period(self, delta=0):
+        before = date.today() - timedelta(1 + delta)
         before = before.strftime('%y-%m-%d')
-        after = date.today() - timedelta(2)
+        after = date.today() - timedelta(2 + delta)
         after = after.strftime('%y-%m-%d')
         return before, after
 
@@ -329,7 +327,7 @@ class APILibrary():
         app_bundle  = app_bdl_yl
 
         requestAPI = urlRequest + '/addDevice'
-        avb_devices = self.getDevices(urlRequest, session)
+        avb_devices = self.getDevices()
         for i in range (0, len(fms_devices)):
             if len(fms_devices[i]) == 16 and fms_devices[i] not in avb_devices:
                 dataValues       = { 
@@ -372,7 +370,7 @@ class APILibrary():
         fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
         gw_eid      = PYXL.get_gw_by_header(g_testfile, g_testserver)
         requestAPI  = urlRequest + '/gatewayActivateDevice'
-        avb_devices = self.getDevices(urlRequest, session)
+        avb_devices = self.getDevices()
 
         for i in range (0, len(fms_devices)):
             if len(fms_devices[i]) == 16 and fms_devices[i] in avb_devices:
@@ -395,7 +393,7 @@ class APILibrary():
         session     = PYXL.get_session_by_header(g_testfile, g_testserver)
         fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
         requestAPI  = urlRequest + '/deviceRemoveApp'
-        avb_devices = self.getDevices(urlRequest, session)
+        avb_devices = self.getDevices()
 
         BuiltIn().log_to_console(" ")
         for i in range (0, len(fms_devices)):
@@ -418,7 +416,7 @@ class APILibrary():
         fms_devices = PYXL.get_devices_by_header(g_testfile, dev_header)
 
         requestAPI = urlRequest + '/setDevice'
-        avb_devices = self.getDevices(urlRequest, session)
+        avb_devices = self.getDevices()
 
         BuiltIn().log_to_console(" ")
         for i in range (0, len(fms_devices)):
@@ -444,7 +442,7 @@ class APILibrary():
         requestAPI_gwDelete     = urlRequest + '/gatewayDeleteDevice'
         requestAPI_removeDevice  = urlRequest + '/removeDevice'
 
-        avb_devices = self.getDevices(urlRequest, session)
+        avb_devices = self.getDevices()
         BuiltIn().log_to_console(" ")
 
         for i in range (0, len(fms_devices)):
@@ -456,7 +454,7 @@ class APILibrary():
                 }
                 for step in range(0,2):
                     response         = requests.post(url=requestAPI_gwDelete, data=dataValues_gwDelete)
-                    time.sleep(5)
+                    # time.sleep(5)
                 jsonReply        = json.loads(response.text)
                 BuiltIn().log_to_console(jsonReply)
             else:
@@ -471,7 +469,7 @@ class APILibrary():
                 }
                 for step in range(0,2):
                     response         = requests.post(url=requestAPI_removeDevice, data=dataValues_removeDevice)
-                    time.sleep(5)
+                    # time.sleep(5)
                 jsonReply        = json.loads(response.text)
                 BuiltIn().log_to_console(jsonReply)
             else:
@@ -573,8 +571,8 @@ class APILibrary():
     ########################################
     ###   7 REPORT   ###
     ########################################
-    def report_daily_reading(self):
-        before, after = self.get_time_period()
+    def report_daily_reading(self,delta=0):
+        before, after = self.get_time_period(delta)
         #1. Date Period
         period = str(after) + " ~ " +  str(before)
 
@@ -602,8 +600,9 @@ class APILibrary():
         reading_rate = '{:.2%}'.format(reading_rate)
 
         #8. Scheduled msg not Reived
-        has_data_c, has_no_data_c = self.get_requested_response("GET_SUMMATION_REPORT_INTERVAL")
+        has_data_c, has_no_data_c, timeout_data_c = self.get_requested_response("GET_SUMMATION_REPORT_INTERVAL")
         has_no_data_c_num = len(has_no_data_c)
+        timeout_data_c_num = len(timeout_data_c)
 
         #9. Scheduled msg Rceived
         has_data_c_num = len(has_data_c)
@@ -621,15 +620,17 @@ class APILibrary():
             str(has_data_num),
             str(reading_rate),
             str(has_no_data_c_num),
+            str(timeout_data_c_num),
             str(has_data_c_num),
             str(reading_rate_c),
             str(has_no_data), 
-            str(has_no_data_c)] )
+            str(has_no_data_c),
+            str(timeout_data_c)] )
 
         BuiltIn().log_to_console(str(row_data))
         PYXL.append_to_report("daily_reading_report.xlsx", *row_data)
 
-    def get_unsocilited_response(self, command):
+    def get_unsocilited_response(self, command, delta=0):
         #CID = 0
         urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
         session     = PYXL.get_session_by_header(g_testfile, g_testserver)
@@ -637,7 +638,7 @@ class APILibrary():
         requestAPI = urlRequest + '/getTransactions'
 
         devices = self.getAllOnlineDevices()
-        before, after = self.get_time_period()
+        before, after = self.get_time_period(delta)
 
         has_no_data = []
         has_data = []
@@ -656,7 +657,7 @@ class APILibrary():
         BuiltIn().log_to_console("\n*** Devices has unsocilited list ***\n" + str(has_data))
         return has_data, has_no_data
 
-    def get_requested_response(self, command):
+    def get_requested_response(self, command, delta=0):
         #CID > 0
         urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
         session     = PYXL.get_session_by_header(g_testfile, g_testserver)
@@ -664,24 +665,29 @@ class APILibrary():
         requestAPI = urlRequest + '/getTransactions'
 
         devices = self.getAllOnlineDevices()
-        before, after = self.get_time_period()
+        before, after = self.get_time_period(delta)
 
         has_no_data = []
         has_data = []
+        timeout_data = []
 
         for eid in devices :
             dataValues = {"eid":str(eid), "qtype":"cid,command,status", "query":">0" + "," + str(command) + "," + "Responded*", "after":str(after), "before":str(before)}
             response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
             jsonReply = json.loads(response.text)
             if len(str(jsonReply['rows'])) > 2: #if there is no data, the length of rows key should be 2
-                has_data.append(str(eid))
+                if "MP_STATUS_NO_RESPONSE_FROM_NIC" in str(jsonReply['rows'][0]):
+                    timeout_data.append(str(eid))
+                else:
+                    has_data.append(str(eid))
             else:
                 has_no_data.append(str(eid))
 
+        
         BuiltIn().log_to_console(str(after) + " ~ " +str(before) )
         BuiltIn().log_to_console("\n*** Devices has no scheduled list ***\n" + str(has_no_data))
         BuiltIn().log_to_console("\n*** Devices has scheduled list ***\n" + str(has_data))
-        return has_data, has_no_data
+        return has_data, has_no_data, timeout_data
 
     def send_command_to_online_devices(self, command, params=None):
         urlRequest  = PYXL.get_url_by_header(g_testfile, g_testserver)
