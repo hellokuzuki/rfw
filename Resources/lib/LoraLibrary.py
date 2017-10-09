@@ -133,10 +133,16 @@ class LoraLibrary():
             status = self.validate_get_protocol_version_command(data)
         elif command == 'GET_NIC_TIME':
             status = self.validate_get_nic_time_command(data)
+        elif command == 'GET_NIC_MODE':
+            status = self.validate_get_nic_mode_command(data, state)
+        elif command == 'SET_NIC_MODE':
+            status = self.validate_reponse_of_set_command(data)
         elif command == 'GET_NIC_SCHEDULE':
             status = self.validate_get_nic_schedule_command(data, state)
         elif command == 'SET_NIC_SCHEDULE':
             status = self.validate_reponse_of_set_command(data)
+        elif command == 'GET_NIC_CURRENT_MODE':
+            status = self.validate_get_nic_mode_command(data, state)
         else:
             BuiltIn().log_to_console("Command was not supported.")
         return status
@@ -900,8 +906,8 @@ class LoraLibrary():
                 BuiltIn().log("Set Command been set correctly.", "INFO")
                 return True
             elif response['result_code'] == 1:
-                BuiltIn().log("MP_STATUS_FAILURE has been returned.", "INFO")
-                return True
+                BuiltIn().log("MP_STATUS_FAILURE has been returned.", "ERROR")
+                return False
             else:
                 BuiltIn().log("Unknow result code has been returned.", "WARN")
                 return True
@@ -1055,7 +1061,7 @@ class LoraLibrary():
             BuiltIn().log("Response contains incorrect value!", "ERROR")
             return False
 
-    def validate_get_nic_schedule_command(self, response, state):
+    def validate_get_nic_mode_command(self, response, state):
 
         state_para_1 = state[0].rsplit('=',1)[1]
         state_para_2 = state[1].rsplit('=',1)[1]
@@ -1064,17 +1070,18 @@ class LoraLibrary():
 
         print 'state_para_1 = ' + str(state_para_1)
         print 'state_para_2 = ' + str(state_para_2)
-        print 'state_para_3 = ' + str(state_para_3) 
+        print 'state_para_3 = ' + str(state_para_3)
+        print 'state_para_4 = ' + str(state_para_4)
 
-        elements = {"result_code","day_mask", "active_period_start_time", "active_period_end_time", "modes"}
+        elements = {"result_code","mode_id", "MAC_polling_interval", "spread_factor", "poll_confirmation"}
         self.print_response_data(response, *elements)
 
         if  (
                 'result_code' not in response or
-                'day_mask' not in response or
-                'active_period_start_time' not in response or
-                'active_period_end_time' not in response or
-                'modes' not in response
+                'mode_id' not in response or
+                'MAC_polling_interval' not in response or
+                'spread_factor' not in response or
+                'poll_confirmation' not in response
             ):
             BuiltIn().log("Response does not contain correct parameters!", "ERROR")
             return False
@@ -1086,7 +1093,66 @@ class LoraLibrary():
                 BuiltIn().log("Result_code = 8, Unknon Meter State has been returned!", "WARN")
                 return True
             elif state is None:
-                BuiltIn().log("pilot_light_mode stats was not validated.", "INFO")
+                BuiltIn().log("nic_mode stats was not validated.", "INFO")
+                return True
+            elif int(state_para_1) != response['mode_id']:
+                BuiltIn().log("Incorrect mode_id value has been returned!", "ERROR")
+                return False
+            elif int(state_para_2) != response['MAC_polling_interval']:
+                BuiltIn().log("Incorrect MAC_polling_interval value has been returned!", "ERROR")
+                return False
+            elif int(state_para_3) != response['spread_factor']:
+                BuiltIn().log("Incorrect spread_factor value has been returned!", "ERROR")
+                return False
+            elif int(state_para_4) != response['poll_confirmation']:
+                BuiltIn().log("Incorrect poll_confirmation value has been returned!", "ERROR")
+                return False
+            else:
+                BuiltIn().log("Validation Successful.", "INFO")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_nic_schedule_command(self, response, state):
+
+        state_para_1 = state[0].rsplit('=',1)[1]
+        state_para_2 = state[1].rsplit('=',1)[1]
+        state_para_3 = state[2].rsplit('=',1)[1]
+        state_para_4 = state[3].rsplit('=',1)[1]
+        state_para_5 = state[4].rsplit('=',1)[1]
+        state_para_6 = state[5].rsplit('=',1)[1]       
+
+        print 'state_para_1 = ' + str(state_para_1)
+        print 'state_para_2 = ' + str(state_para_2)
+        print 'state_para_3 = ' + str(state_para_3)
+        print 'state_para_4 = ' + str(state_para_4)
+        print 'state_para_5 = ' + str(state_para_5)
+        print 'state_para_6 = ' + str(state_para_6)
+        
+        elements = {"result_code","day_mask", "active_period_start_time", "active_period_end_time", "active_period_mode", "inactive_period_mode", "time_offset"}
+        self.print_response_data(response, *elements)
+
+        if  (
+                'result_code' not in response or
+                'day_mask' not in response or
+                'active_period_start_time' not in response or
+                'active_period_end_time' not in response or
+                'active_period_mode' not in response not in response or
+                'inactive_period_mode' not in response not in response or
+                'time_offset' not in response not in response
+            ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+            elif response['result_code'] == 8:
+                BuiltIn().log("Result_code = 8, Unknon Meter State has been returned!", "WARN")
+                return True
+            elif state is None:
+                BuiltIn().log("nic_set_schedule stats was not validated.", "INFO")
                 return True
             elif int(state_para_1) != response['day_mask']:
                 BuiltIn().log("Incorrect day_mask value has been returned!", "ERROR")
@@ -1097,8 +1163,14 @@ class LoraLibrary():
             elif int(state_para_3) != response['active_period_end_time']:
                 BuiltIn().log("Incorrect active_period_end_time value has been returned!", "ERROR")
                 return False
-            elif int(state_para_4) != response['modes']:
-                BuiltIn().log("Incorrect modes value has been returned!", "ERROR")
+            elif int(state_para_4) != response['active_period_mode']:
+                BuiltIn().log("Incorrect active_period_mode value has been returned!", "ERROR")
+                return False
+            elif int(state_para_4) != response['inactive_period_mode']:
+                BuiltIn().log("Incorrect inactive_period_mode value has been returned!", "ERROR")
+                return False
+            elif int(state_para_4) != response['time_offset']:
+                BuiltIn().log("Incorrect time_offset value has been returned!", "ERROR")
                 return False
             else:
                 BuiltIn().log("Validation Successful.", "INFO")
