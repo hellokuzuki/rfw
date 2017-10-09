@@ -1166,10 +1166,10 @@ class LoraLibrary():
             elif int(state_para_4) != response['active_period_mode']:
                 BuiltIn().log("Incorrect active_period_mode value has been returned!", "ERROR")
                 return False
-            elif int(state_para_4) != response['inactive_period_mode']:
+            elif int(state_para_5) != response['inactive_period_mode']:
                 BuiltIn().log("Incorrect inactive_period_mode value has been returned!", "ERROR")
                 return False
-            elif int(state_para_4) != response['time_offset']:
+            elif int(state_para_6) != response['time_offset']:
                 BuiltIn().log("Incorrect time_offset value has been returned!", "ERROR")
                 return False
             else:

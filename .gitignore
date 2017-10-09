@@ -8,5 +8,6 @@
 /TestSuite-Jenkins/temp/*
 /TestSuite-Jenkins/test/*
 /TestSuit-POET/temp
+/workspace/*
 *.png
 
