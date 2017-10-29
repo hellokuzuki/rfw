@@ -1,5 +1,6 @@
 *** Settings ***
 Library     APILibrary
+# Library     LoraRegAPI
 # Library     OperatingSystem
 # Library     DateTime
 # Library     Collections

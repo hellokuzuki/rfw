@@ -30,8 +30,8 @@ class LoraLibrary():
         else:
             return None
 
-    def print_response_data(self, response, *list):
-        for element in list:
+    def print_response_data(self, response, *li):
+        for element in li:
             BuiltIn().log( element + " in response = " + str(response[element]), console="True")
 
     def validate_command(self, data_obj, command, state=None):

@@ -3,6 +3,7 @@
 *.html
 *.log
 *.pyc
+*.idea
 /testcase/playground
 /Resources/lib/*.pyc
 /TestSuite-Jenkins/temp/*
