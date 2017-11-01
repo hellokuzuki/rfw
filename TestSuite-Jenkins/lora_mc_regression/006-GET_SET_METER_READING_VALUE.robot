@@ -1,7 +1,7 @@
 *** Settings ***
-Resource    ../../Resources/regression_api_keywords.robot
-Resource    ../../Resources/regression_api_setting.robot
-Library     LoraRegAPI    @{environment}
+Resource    ../../Resources/variables.robot
+Resource    ../../Resources/keywords.robot
+Library     LoraLibrary    micom
 
 *** Variables ***
 ${get_cmd}        GET_METER_READING_VALUE

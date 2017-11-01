@@ -72,7 +72,7 @@ class LoraRegAPI:
     def get_command_response(self, command, cid, eid=''):
 
         # Get response retry time
-        retry = 15
+        retry = 20
 
         # Time out response
         timeout_period = 30
@@ -103,7 +103,8 @@ class LoraRegAPI:
             dataValues = {"eid": str(eid), "qtype": "cid,command,status",
                           "query": str(cid) + "," + str(command) + "," + "Responded*", "after": str(send_time)}
 
-            response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
+            # headers={'Content-Type': 'application/x-www-form-urlencoded'} should fix the issue ConnectionError
+            response = requests.get(url=requestAPI, cookies=cookie, params=dataValues, headers={'Content-Type': 'application/x-www-form-urlencoded'})
             jsonReply = json.loads(response.text)
 
             if len(jsonReply['rows']) == 1:
@@ -129,9 +130,12 @@ class LoraRegAPI:
                 state = state.rsplit('=', 1)[1]
             else:
                 state = state.split(",")
-
-        data = json.loads(data)
-        command = data['name']
+        if data is None:
+            BuiltIn().log("Validator data is None.", "ERROR")
+            return False
+        else:
+            data = json.loads(data)
+            command = data['name']
 
         if command == 'GET_METER_TYPE':
             status = self.validate_get_meter_type(data)
