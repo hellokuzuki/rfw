@@ -593,36 +593,53 @@ class APILibrary:
         # 2. Total All Devices
         total_devices = self.getDevices()
         total_devices_num = len(total_devices)
+        BuiltIn().log_to_console(" **** total_devices = " + str(total_devices) + " **** " )
 
         # 3. Total Online Devices
         total_online_devices = self.getAllOnlineDevices()
         total_online_devices_num = len(total_online_devices)
+        BuiltIn().log_to_console(" **** total_online_devices = " + str(total_online_devices) + " **** " )
+
 
         # 4. Device Availablilty Rate
-        online_rate = int(total_online_devices_num) * 1.0 / int(total_devices_num) * 1.00
+        if int(total_devices_num == 0):
+            online_rate = 0
+        else:
+            online_rate = int(total_online_devices_num) * 1.0 / int(total_devices_num) * 1.00
         online_rate = '{:.2%}'.format(online_rate)
 
         # 5. Unsolicited msg Received
         has_data, has_no_data = self.get_unsocilited_response("GET_METER_SUMMATION_DELIVERED")
         has_data_num = len(has_data)
+        BuiltIn().log_to_console(" **** GET_METER_SUMMATION_DELIVERED has_data_num = " + str(has_data_num) + " **** " )
 
         # 6. Unsolicited msg not Received
         has_no_data_num = len(has_no_data)
+        BuiltIn().log_to_console(" **** GET_METER_SUMMATION_DELIVERED has_no_data_num = " + str(has_no_data_num) + " **** " )
 
         # 7. Unsolicited msg Received Rate
-        reading_rate = int(has_data_num) * 1.0 / int(total_online_devices_num) * 1.00
+        if int(total_online_devices_num == 0):
+            online_rate = 0
+        else:
+            reading_rate = int(has_data_num) * 1.0 / int(total_online_devices_num) * 1.00
         reading_rate = '{:.2%}'.format(reading_rate)
 
         # 8. Scheduled msg not Reived
         has_data_c, has_no_data_c, timeout_data_c = self.get_requested_response("GET_SUMMATION_REPORT_INTERVAL")
         has_no_data_c_num = len(has_no_data_c)
         timeout_data_c_num = len(timeout_data_c)
+        BuiltIn().log_to_console(" **** GET_SUMMATION_REPORT_INTERVAL has_no_data_c_num = " + str(has_no_data_c_num) + " **** " )
+        BuiltIn().log_to_console(" **** GET_SUMMATION_REPORT_INTERVAL timeout_data_c_num = " + str(timeout_data_c_num) + " **** " )
 
         # 9. Scheduled msg Rceived
         has_data_c_num = len(has_data_c)
+        BuiltIn().log_to_console(" **** GET_SUMMATION_REPORT_INTERVAL has_data_c_num = " + str(has_data_c_num) + " **** " )
 
         # 10. Scheduled msg Rate
-        reading_rate_c = int(has_data_c_num) * 1.0 / int(total_online_devices_num) * 1.00
+        if int(total_online_devices_num == 0):
+            online_rate = 0
+        else:
+            reading_rate_c = int(has_data_c_num) * 1.0 / int(total_online_devices_num) * 1.00
         reading_rate_c = '{:.2%}'.format(reading_rate_c)
 
         row_data = []
