@@ -7,6 +7,6 @@ Library     LoraRegAPI    @{environment}
 ${cmd}        GET_METER_SHUTOFF_CODES
 
 *** Test Cases ***
-Validate Command GET_METER_FIRMWARE_VERSION
+Validate Command GET_METER_SHUTOFF_CODES
     User Login By SessionID
     Send Command And Validate Response    ${cmd}    ${EMPTY}    ${EMPTY}    ${eid}

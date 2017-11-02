@@ -9,5 +9,6 @@ ${para_1}         mode_id=4,MAC_polling_interval=304,spread_factor=2,poll_confir
 
 *** Test Cases ***
 Validate Command GET_NIC_CURRENT_MODE Set To Para1
-    User Login By SessionID
-    Send Command And Validate Response    ${get_cmd}    ${EMPTY}    ${para_1}    ${eid}
+    Select GateWay      ${gw}
+    Send Out Command To EID    ${eid}    ${get_cmd}
+    Wait And Validate Response Of Command    ${eid}    ${get_cmd}    ${para_1}
