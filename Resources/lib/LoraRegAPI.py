@@ -72,7 +72,7 @@ class LoraRegAPI:
     def get_command_response(self, command, cid, eid=''):
 
         # Get response retry time
-        retry = 20
+        retry = 15
 
         # Time out response
         timeout_period = 30
@@ -103,8 +103,7 @@ class LoraRegAPI:
             dataValues = {"eid": str(eid), "qtype": "cid,command,status",
                           "query": str(cid) + "," + str(command) + "," + "Responded*", "after": str(send_time)}
 
-            # headers={'Content-Type': 'application/x-www-form-urlencoded'} should fix the issue ConnectionError
-            response = requests.get(url=requestAPI, cookies=cookie, params=dataValues, headers={'Content-Type': 'application/x-www-form-urlencoded'})
+            response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
             jsonReply = json.loads(response.text)
 
             if len(jsonReply['rows']) == 1:
@@ -130,12 +129,9 @@ class LoraRegAPI:
                 state = state.rsplit('=', 1)[1]
             else:
                 state = state.split(",")
-        if data is None:
-            BuiltIn().log("Validator data is None.", "ERROR")
-            return False
-        else:
-            data = json.loads(data)
-            command = data['name']
+        
+        data = json.loads(data)
+        command = data['name']
 
         if command == 'GET_METER_TYPE':
             status = self.validate_get_meter_type(data)
@@ -188,8 +184,8 @@ class LoraRegAPI:
         elif command == 'SET_CONFIG_DISABLE_CENTER_SHUTDOWN':
             status = self.validate_reponse_of_set_command(data)
 
-        elif command == 'GET_PROTOCOL_VERSION':
-            status = self.validate_get_protocol_version_command(data)
+        elif command == 'GET_METER_PROTOCOL_VERSION':
+            status = self.validate_get_meter_protocol_version_command(data)
 
         elif command == 'GET_NIC_TIME':
             status = self.validate_get_nic_time_command(data)
@@ -611,7 +607,7 @@ class LoraRegAPI:
             BuiltIn().log("Response contains incorrect value!", "ERROR")
             return False
 
-    def validate_get_protocol_version_command(self, response):
+    def validate_get_meter_protocol_version_command(self, response):
 
         elements = {"result_code", "protocol_version"}
         
