@@ -523,7 +523,29 @@ class LoraRegAPI:
 
         if  (
                 'result_code' not in response or
-                'status' not in response
+                'B_line_selection' not in response or
+                'c_line' not in response or
+                'call_for_load_survey' not in response or
+                'call_for_periodic_meter_reading' not in response or
+                'conduct_load_survey' not in response or
+                'flow_rate_exceeded_warning' not in response or
+                'internal_pipe_leakage_pressure_monitor' not in response or
+                'internal_pipe_leakage_timer_B1' not in response or
+                'internal_pipe_leakage_timer_B2' not in response or
+                'internal_pipe_leakage_warning_display_bypass' not in response or
+                'low_pressure_shutdown_bypass' not in response or
+                'low_voltage_call' not in response or
+                'low_voltage_shutdown_warning' not in response or
+                'max_ind_flow_rate_exceeded_shutdown_bypass' not in response or
+                'oscillation_detection_shutdown_bypass' not in response or
+                'pilot_flame_register' not in response or
+                'pressure_monitor' not in response or
+                'safety_duration' not in response or
+                'safety_duration_bypass' not in response or
+                'safety_duration_start_time' not in response or
+                'tot_max_flow_rate_exceeded_shutdown_bypass' not in response or
+                'type_of_time_extension' not in response or
+                'write_protect' not in response
             ):
             BuiltIn().log("Response does not contain correct parameters!", "ERROR")
             return False
@@ -531,12 +553,33 @@ class LoraRegAPI:
             if response['result_code'] == 7:
                 BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
                 return True
-            elif response['status'] is not None:
+            elif (
+                response['B_line_selection'] is not None and
+                response['c_line'] is not None and
+                response['call_for_load_survey'] is not None and
+                response['call_for_periodic_meter_reading'] is not None and
+                response['conduct_load_survey'] is not None and
+                response['flow_rate_exceeded_warning'] is not None and
+                response['internal_pipe_leakage_pressure_monitor'] is not None and
+                response['internal_pipe_leakage_timer_B1'] is not None and
+                response['internal_pipe_leakage_timer_B2'] is not None and
+                response['internal_pipe_leakage_warning_display_bypass'] is not None and
+                response['low_pressure_shutdown_bypass'] is not None and
+                response['low_voltage_call'] is not None and
+                response['low_voltage_shutdown_warning'] is not None and
+                response['max_ind_flow_rate_exceeded_shutdown_bypass'] is not None and
+                response['oscillation_detection_shutdown_bypass'] is not None and
+                response['pilot_flame_register'] is not None and
+                response['pressure_monitor'] is not None and
+                response['safety_duration'] is not None and
+                response['safety_duration_bypass'] is not None and
+                response['safety_duration_start_time'] is not None and
+                response['tot_max_flow_rate_exceeded_shutdown_bypass'] is not None and
+                response['type_of_time_extension'] is not None and
+                response['write_protect'] is not None          
+            ):
                 BuiltIn().log("Meter Status has been verified.", "INFO")
                 return True
-            elif str(response['status']) == "":
-                BuiltIn().log("Empty status was returned", "ERROR")
-                return False
             else:
                 BuiltIn().log("Unknow issue.", "WARN")
                 return True
