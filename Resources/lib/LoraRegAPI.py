@@ -1118,22 +1118,69 @@ class LoraRegAPI:
 
     def validate_get_meter_shutoff_codes(self, response):
 
-        elements = {"result_code","shutoff_codes"}
+        elements = {"result_code"}
         # self.print_response_data(response, *elements)
 
         if  (
-                'result_code' not in response or
-                'shutoff_codes' not in response
+                'result_code' not in response
             ):
             BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+
+        elif (
+                'code1' in response and 'timestamp1' not in response
+            ):
+            BuiltIn().log("Response does not contain code1 parameters!", "ERROR")
+            return False
+        elif (
+                'code2' in response and 'timestamp2' not in response
+            ):
+            BuiltIn().log("Response does not contain code2 parameters!", "ERROR")
+            return False
+        elif (
+                'code3' in response and 'timestamp3' not in response
+            ):
+            BuiltIn().log("Response does not contain code3 parameters!", "ERROR")
+            return False
+        elif (
+                'code4' in response and 'timestamp4' not in response
+            ):
+            BuiltIn().log("Response does not contain code4 parameters!", "ERROR")
+            return False
+        elif (
+                'code5' in response and 'timestamp5' not in response
+            ):
+            BuiltIn().log("Response does not contain code5 parameters!", "ERROR")
+            return False
+        elif (
+                'code6' in response and 'timestamp6' not in response
+            ):
+            BuiltIn().log("Response does not contain code6 parameters!", "ERROR")
+            return False
+        elif (
+                'code7' in response and 'timestamp7' not in response
+            ):
+            BuiltIn().log("Response does not contain code7 parameters!", "ERROR")
+            return False
+        elif (
+                'code8' in response and 'timestamp8' not in response
+            ):
+            BuiltIn().log("Response does not contain code8 parameters!", "ERROR")
+            return False
+        elif (
+                'code9' in response and 'timestamp9' not in response
+            ):
+            BuiltIn().log("Response does not contain code9 parameters!", "ERROR")
+            return False
+        elif (
+                'code10' in response and 'timestamp10' not in response
+            ):
+            BuiltIn().log("Response does not contain code10 parameters!", "ERROR")
             return False
         elif response['result_code'] < 10:
             if response['result_code'] == 7:
                 BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
                 return True
-            elif len(str(response['shutoff_codes'])) < 5:
-                BuiltIn().log("Incorrect version has been returned!", "ERROR")
-                return False
             else:
                 BuiltIn().log("Validation Successful.", "INFO")
                 return True
