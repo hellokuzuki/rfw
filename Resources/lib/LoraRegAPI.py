@@ -540,7 +540,7 @@ class LoraRegAPI:
                 'oscillation_detection_shutdown_bypass' not in response or
                 'pilot_flame_register' not in response or
                 'pressure_monitor' not in response or
-                'safety_duration' not in response or
+                'safety_duration_time' not in response or
                 'safety_duration_bypass' not in response or
                 'safety_duration_start_time' not in response or
                 'tot_max_flow_rate_exceeded_shutdown_bypass' not in response or
@@ -571,7 +571,7 @@ class LoraRegAPI:
                 response['oscillation_detection_shutdown_bypass'] is not None and
                 response['pilot_flame_register'] is not None and
                 response['pressure_monitor'] is not None and
-                response['safety_duration'] is not None and
+                response['safety_duration_time'] is not None and
                 response['safety_duration_bypass'] is not None and
                 response['safety_duration_start_time'] is not None and
                 response['tot_max_flow_rate_exceeded_shutdown_bypass'] is not None and
