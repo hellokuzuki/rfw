@@ -771,7 +771,6 @@ class LoraRegAPI:
         
         elements = {"result_code","day_mask", "active_period_start_time", "active_period_end_time", "active_period_mode", "inactive_period_mode", "time_offset"}
         # self.print_response_data(response, *elements)
-
         if  (
                 'result_code' not in response or
                 'day_mask' not in response or
@@ -808,7 +807,7 @@ class LoraRegAPI:
             elif int(state_para_5) != response['inactive_period_mode']:
                 BuiltIn().log("Incorrect inactive_period_mode value has been returned!", "ERROR")
                 return False
-            elif state_para_6 != response['time_offset']:
+            elif int(state_para_6) != response['time_offset']:
                 BuiltIn().log("Incorrect time_offset value has been returned!", "ERROR")
                 return False
             else:
