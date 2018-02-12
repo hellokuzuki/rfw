@@ -47,14 +47,14 @@ class LoraRegAPI:
                 dataValues = {"eid": str(eid), "name": command, str(cmd_name): str(cmd_par)}
             if parameters.count("=") > 1:
                 parameters = parameters.split(",")
-                
+
                 dic = {}
                 for para in parameters:
-                    
+
                     dic.update({str(para.rsplit('=', 1)[0]): str(para.rsplit('=', 1)[1])})
                 dataValues = {"eid": str(eid), "name": command, "params": json.dumps(dic)}
                 BuiltIn().log_to_console(" *** dataValues = " + str(dataValues))
-                    
+
         else:
             dataValues = {"eid": str(eid), "name": command}
             BuiltIn().log("parameters was not provided. ", "INFO")
@@ -82,6 +82,8 @@ class LoraRegAPI:
         cookie      = {"sessionid": session}
         requestAPI = urlRequest + '/getTransactions'
 
+        headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
+
         if cid is None:
             BuiltIn().log("Validation failed because of cid is None", "ERROR")
             return False
@@ -102,8 +104,8 @@ class LoraRegAPI:
 
             dataValues = {"eid": str(eid), "qtype": "cid,command,status",
                           "query": str(cid) + "," + str(command) + "," + "Responded*", "after": str(send_time)}
-
-            response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
+            #fix badlines error
+            response = requests.get(url=requestAPI, headers=headers, cookies=cookie, params=dataValues)
             jsonReply = json.loads(response.text)
 
             if len(jsonReply['rows']) == 1:
