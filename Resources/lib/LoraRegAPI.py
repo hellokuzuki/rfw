@@ -296,10 +296,12 @@ class LoraRegAPI:
     def validate_get_meter_type(self,response):
         elements = {"result_code", "manufacturer", "model_id"}
 
-        if "YL" not in response['profile_name']:
-            meter_type = "micom"
-        else:
+        if "YL" in response['profile_name'] or "YS" in response['profile_name']:
             meter_type = "yungloong"
+        else:
+            meter_type = "micom"
+
+        BuiltIn().log_to_console("Meter type = " + meter_type)
 
         if (
                 'result_code' not in response or
@@ -355,10 +357,10 @@ class LoraRegAPI:
         
         elements = {"result_code", "valve_state"}
 
-        if "YL" not in response['profile_name']:
-            meter_type = "micom"
-        else:
+        if "YL" in response['profile_name'] or "YS" in response['profile_name']:
             meter_type = "yungloong"
+        else:
+            meter_type = "micom"
         
         if  (
                 'result_code' not in response or
