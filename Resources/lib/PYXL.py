@@ -4,6 +4,7 @@ import json
 from robot.libraries.BuiltIn import BuiltIn
 # from robot.api import logger
 from openpyxl import load_workbook
+requests.packages.urllib3.disable_warnings()
 
 CONST_SHEET_ENV         = 'enviornment'
 CONST_FMS_URL           = 2
@@ -122,7 +123,7 @@ def set_session_by_header(datafile, server):
     userLoginRequest = urlRequest + '/login'
     dataValues       = {"username":username, "password":password}
     if len(sessionid) != 32:
-        response         = requests.post(url=userLoginRequest,data=dataValues)
+        response         = requests.post(url=userLoginRequest,data=dataValues, verify=False)
         jsonReply        = json.loads(response.text)
         retStatus        = jsonReply['response'].encode('utf-8')
 
@@ -140,7 +141,7 @@ def set_session_by_header(datafile, server):
     else:
         checkLoginRequest = urlRequest + '/checklogin'
         dataValues        = {"sessionid":sessionid}
-        response          = requests.post(url=checkLoginRequest,data=dataValues)
+        response          = requests.post(url=checkLoginRequest,data=dataValues, verify=False)
         jsonReply         = json.loads(response.text)
         retStatus         = jsonReply['response'].encode('utf-8')
 
@@ -149,7 +150,7 @@ def set_session_by_header(datafile, server):
             return sessionid
         else:
             dataValues       = {"username":username, "password":password}
-            response         = requests.post(url=userLoginRequest,data=dataValues)
+            response         = requests.post(url=userLoginRequest,data=dataValues, verify=False)
             jsonReply        = json.loads(response.text)
             retStatus        = jsonReply['response'].encode('utf-8')
             if retStatus == 'ok':

@@ -59,7 +59,7 @@ class LoraRegAPI:
             dataValues = {"eid": str(eid), "name": command}
             BuiltIn().log("parameters was not provided. ", "INFO")
 
-        response = requests.get(url=requestAPI, cookies=cookie, params=dataValues)
+        response = requests.get(url=requestAPI, cookies=cookie, params=dataValues, verify=False)
         jsonReply = json.loads(response.text)
         retStatus = jsonReply['response'].encode('utf-8')
 
@@ -105,7 +105,7 @@ class LoraRegAPI:
             dataValues = {"eid": str(eid), "qtype": "cid,command,status",
                           "query": str(cid) + "," + str(command) + "," + "Responded*", "after": str(send_time)}
             #fix badlines error
-            response = requests.get(url=requestAPI, headers=headers, cookies=cookie, params=dataValues)
+            response = requests.get(url=requestAPI, headers=headers, cookies=cookie, params=dataValues, verify=False)
             jsonReply = json.loads(response.text)
 
             if len(jsonReply['rows']) == 1:
