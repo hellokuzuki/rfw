@@ -1,7 +1,7 @@
 *** Settings ***
-Library     LoraRegAPI    TestData.xlsx    NB SERVER
-Resource    ../../Resources/regression_nb_api_keywords.robot
-Resource    ../../Resources/regression_nb_api_setting.robot
+Resource    ../../Resources/regression_api_keywords.robot
+Resource    ../../Resources/regression_api_setting.robot
+Library     LoraRegAPI    @{environment}
 
 *** Variables ***
 ${cmd}    GET_METER_TYPE

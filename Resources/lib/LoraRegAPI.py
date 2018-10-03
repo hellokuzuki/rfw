@@ -18,7 +18,7 @@ class LoraRegAPI:
             global g_testserver
             g_testfile = testfile
             g_testserver = testserver
-            BuiltIn().log_to_console(g_testfile + g_testserver)
+            BuiltIn().log_to_console(g_testfile + " " + g_testserver)
         else:
             BuiltIn().log("*** test server and test file information was not porvided !! ", "ERROR")
 
@@ -47,14 +47,16 @@ class LoraRegAPI:
                 dataValues = {"eid": str(eid), "name": command, str(cmd_name): str(cmd_par)}
             if parameters.count("=") > 1:
                 parameters = parameters.split(",")
-
+                BuiltIn().log_to_console(" *** parameters = " + str(parameters))
                 dic = {}
                 for para in parameters:
+                    BuiltIn().log_to_console(" *** para = " + para)
+                    # dic.update({str(para.rsplit('=', 1)[0]): str(para.rsplit('=', 1)[1])})
+                    dic[str(para.rsplit('=', 1)[0])] = str(para.rsplit('=', 1)[1])
 
-                    dic.update({str(para.rsplit('=', 1)[0]): str(para.rsplit('=', 1)[1])})
                 dataValues = {"eid": str(eid), "name": command, "params": json.dumps(dic)}
+                # dataValues = {"eid": str(eid), "name": command, "params": json.dumps(dic)}
                 BuiltIn().log_to_console(" *** dataValues = " + str(dataValues))
-
         else:
             dataValues = {"eid": str(eid), "name": command}
             BuiltIn().log("parameters was not provided. ", "INFO")
@@ -131,7 +133,7 @@ class LoraRegAPI:
                 state = state.rsplit('=', 1)[1]
             else:
                 state = state.split(",")
-        
+
         data = json.loads(data)
         command = data['name']
 
@@ -267,26 +269,29 @@ class LoraRegAPI:
         elif command == 'SET_METER_SERIAL_NUMBER':
             status = self.validate_reponse_of_set_command(data)
 
-        elif command == 'GET_ELECTRIC_QNT_VALUE':
-            status = self.validate_get_electric_qnt_value(data)
+        elif command == 'GET_METER_ELECTRIC_QUANTITY_VALUE':
+            status = self.validate_get_meter_electric_qnt_value(data)
 
-        elif command == 'GET_COMMS_MODE':   
-            status = self.validate_get_comms_mode(data, state)
+        elif command == 'GET_METER_COMMS_MODE':
+            status = self.validate_get_meter_comms_mode(data, state)
 
-        elif command == 'SET_COMMS_MODE':
+        elif command == 'SET_METER_COMMS_MODE':
             status = self.validate_reponse_of_set_command(data)
 
-        elif command == 'GET_PILOT_LIGHT_MODE':
-            status = self.validate_get_pilot_light_mode_command(data, state)
+        elif command == 'GET_METER_PILOT_LIGHT_MODE':
+            status = self.validate_get_meter_pilot_light_mode_command(data, state)
 
-        elif command == 'SET_PILOT_LIGHT_MODE':
+        elif command == 'SET_METER_PILOT_LIGHT_MODE':
             status = self.validate_reponse_of_set_command(data)
 
-        elif command == 'GET_EARTHQUAKE_SENSOR_STATE':
-            status = self.validate_get_earthquake_sensor_state(data, state)
+        elif command == 'GET_METER_EARTHQUAKE_SENSOR_STATE':
+            status = self.validate_get_meter_earthquake_sensor_state(data, state)
 
-        elif command == 'SET_EARTHQUAKE_SENSOR_STATE':
+        elif command == 'SET_METER_EARTHQUAKE_SENSOR_STATE':
             status = self.validate_reponse_of_set_command(data)
+
+        elif command == 'GET_APP_DETAILS':
+            status = self.validate_get_app_details(data)
 
         else:
             status = False
@@ -354,14 +359,14 @@ class LoraRegAPI:
             return False
 
     def validate_get_meter_gas_valve_state(self, response, state):
-        
+
         elements = {"result_code", "valve_state"}
 
         if "YL" in response['profile_name'] or "YS" in response['profile_name']:
             meter_type = "yungloong"
         else:
             meter_type = "micom"
-        
+
         if  (
                 'result_code' not in response or
                 'valve_state' not in response
@@ -421,7 +426,7 @@ class LoraRegAPI:
     def validate_get_report_interval(self, response, state):
 
         elements = {"result_code","report_interval_mins"}
-        
+
         if  (
                 'result_code' not in response or
                 'report_interval_mins' not in response
@@ -493,7 +498,7 @@ class LoraRegAPI:
     def validate_get_meter_reading_value_command(self, response, state):
 
         elements = {"result_code","reading_value"}
-        
+
         if  (
                 'result_code' not in response or
                 'reading_value' not in response or
@@ -580,7 +585,7 @@ class LoraRegAPI:
                 response['safety_duration_start_time'] is not None and
                 response['tot_max_flow_rate_exceeded_shutdown_bypass'] is not None and
                 response['type_of_time_extension'] is not None and
-                response['write_protect'] is not None          
+                response['write_protect'] is not None
             ):
                 BuiltIn().log("Meter Status has been verified.", "INFO")
                 return True
@@ -657,7 +662,7 @@ class LoraRegAPI:
     def validate_get_meter_protocol_version_command(self, response):
 
         elements = {"result_code", "protocol_version"}
-        
+
         if  (
                 'result_code' not in response or
                 'protocol_version' not in response
@@ -706,25 +711,39 @@ class LoraRegAPI:
             return False
 
     def validate_get_nic_mode_command(self, response, state):
+        app_version = BuiltIn().get_variable_value("${LUA_VER}")
+        app_version = str(app_version)
 
-        state_para_1 = state[0].rsplit('=',1)[1]
-        state_para_2 = state[1].rsplit('=',1)[1]
-        state_para_3 = state[2].rsplit('=',1)[1]
-        state_para_4 = state[3].rsplit('=',1)[1]
+        if 'NB' not in app_version:
+            state_para_1 = state[0].rsplit('=',1)[1]
+            state_para_2 = state[1].rsplit('=',1)[1]
+            state_para_3 = state[2].rsplit('=',1)[1]
+            state_para_4 = state[3].rsplit('=',1)[1]
 
-        print 'state_para_1 = ' + str(state_para_1)
-        print 'state_para_2 = ' + str(state_para_2)
-        print 'state_para_3 = ' + str(state_para_3)
-        print 'state_para_4 = ' + str(state_para_4)
+            print 'state_para_1 = ' + str(state_para_1)
+            print 'state_para_2 = ' + str(state_para_2)
+            print 'state_para_3 = ' + str(state_para_3)
+            print 'state_para_4 = ' + str(state_para_4)
 
-        elements = {"result_code","mode_id", "MAC_polling_interval", "spread_factor", "poll_confirmation"}
+            elements = {"result_code","mode_id", "MAC_polling_interval", "spread_factor", "poll_confirmation"}
+
+        else:
+            state_para_1 = state[0].rsplit('=',1)[1]
+            state_para_2 = state[1].rsplit('=',1)[1]
+
+            print 'state_para_1 = ' + str(state_para_1)
+            print 'state_para_2 = ' + str(state_para_2)
+
+            elements = {"result_code","mode_id", "MAC_polling_interval"}
 
         if  (
                 'result_code' not in response or
                 'mode_id' not in response or
                 'MAC_polling_interval' not in response or
-                'spread_factor' not in response or
-                'poll_confirmation' not in response
+                ('spread_factor' not in response and 'NB' not in app_version) or
+                ('poll_confirmation' not in response and 'NB' not in app_version) or
+                ('spread_factor' in response and 'NB' in app_version) or
+                ('poll_confirmation' in response and 'NB' in app_version)
             ):
             BuiltIn().log("Response does not contain correct parameters!", "ERROR")
             return False
@@ -744,10 +763,10 @@ class LoraRegAPI:
             elif int(state_para_2) != response['MAC_polling_interval']:
                 BuiltIn().log("Incorrect MAC_polling_interval value has been returned!", "ERROR")
                 return False
-            elif int(state_para_3) != response['spread_factor']:
+            elif 'NB' not in app_version and int(state_para_3) != response['spread_factor']:
                 BuiltIn().log("Incorrect spread_factor value has been returned!", "ERROR")
                 return False
-            elif int(state_para_4) != response['poll_confirmation']:
+            elif 'NB' not in app_version and int(state_para_4) != response['poll_confirmation']:
                 BuiltIn().log("Incorrect poll_confirmation value has been returned!", "ERROR")
                 return False
             else:
@@ -764,7 +783,7 @@ class LoraRegAPI:
         state_para_3 = state[2].rsplit('=',1)[1]
         state_para_4 = state[3].rsplit('=',1)[1]
         state_para_5 = state[4].rsplit('=',1)[1]
-        state_para_6 = state[5].rsplit('=',1)[1]       
+        state_para_6 = state[5].rsplit('=',1)[1]
 
         print 'state_para_1 = ' + str(state_para_1)
         print 'state_para_2 = ' + str(state_para_2)
@@ -772,7 +791,7 @@ class LoraRegAPI:
         print 'state_para_4 = ' + str(state_para_4)
         print 'state_para_5 = ' + str(state_para_5)
         print 'state_para_6 = ' + str(state_para_6)
-        
+
         elements = {"result_code","day_mask", "active_period_start_time", "active_period_end_time", "active_period_mode", "inactive_period_mode", "time_offset"}
         # self.print_response_data(response, *elements)
         if  (
@@ -903,7 +922,7 @@ class LoraRegAPI:
                     return False
                 else:
                     BuiltIn().log("Validation Successful.", "INFO")
-                    return True 
+                    return True
             elif int(state) > 999:
                 state = str(state)[:3]
                 print int(state)
@@ -914,7 +933,7 @@ class LoraRegAPI:
                     return False
                 else:
                     BuiltIn().log("Validation Successful.", "INFO")
-                    return True 
+                    return True
             else:
                 BuiltIn().log("Validation Successful.", "INFO")
                 return True
@@ -946,14 +965,14 @@ class LoraRegAPI:
                     return False
                 else:
                     BuiltIn().log("Validation Successful.", "INFO")
-                    return True 
+                    return True
             elif int(state) > 40:
                 if int(response['overflow_detect_flowrate']) != 40:
                     BuiltIn().log("overflow_detect_flowrate should return the maximum rate(40)", "ERROR")
                     return False
                 else:
                     BuiltIn().log("Validation Successful.", "INFO")
-                    return True 
+                    return True
             else:
                 BuiltIn().log("Validation Successful.", "INFO")
                 return True
@@ -985,7 +1004,7 @@ class LoraRegAPI:
                     return False
             elif int(response['pressure_alarm_level_low']) == int(state):
                 BuiltIn().log("Validation Successful.", "INFO")
-                return True 
+                return True
             else:
                 BuiltIn().log("Unexpected condition!.", "WARN")
                 return True
@@ -1017,7 +1036,7 @@ class LoraRegAPI:
                     return False
             elif int(response['pressure_alarm_level_high']) == int(state):
                 BuiltIn().log("Validation Successful.", "INFO")
-                return True 
+                return True
             else:
                 BuiltIn().log("Unexpected condition!.", "WARN")
                 return True
@@ -1049,7 +1068,7 @@ class LoraRegAPI:
                     return False
             elif int(response['leak_detect_range']) == int(state):
                 BuiltIn().log("Validation Successful.", "INFO")
-                return True 
+                return True
             else:
                 BuiltIn().log("Unexpected condition!.", "WARN")
                 return True
@@ -1058,10 +1077,10 @@ class LoraRegAPI:
             return False
 
     def validate_get_manual_recover_enable(self, response, state):
-        
+
         elements = {"result_code","manual_recover_enable"}
         # self.print_response_data(response, *elements)
-        
+
         if  (
                 'result_code' not in response or
                 'manual_recover_enable' not in response
@@ -1219,7 +1238,7 @@ class LoraRegAPI:
             BuiltIn().log("Response contains incorrect value!", "ERROR")
             return False
 
-    def validate_get_electric_qnt_value(self, response):
+    def validate_get_meter_electric_qnt_value(self, response):
 
         elements = {"result_code","electric_quantity_value"}
         # self.print_response_data(response, *elements)
@@ -1244,11 +1263,11 @@ class LoraRegAPI:
             BuiltIn().log("Response contains incorrect value!", "ERROR")
             return False
 
-    def validate_get_comms_mode(self, response, state):
+    def validate_get_meter_comms_mode(self, response, state):
 
         elements = {"result_code","meter_comms_mode"}
         # self.print_response_data(response, *elements)
-        
+
         if  (
                 'result_code' not in response or
                 'meter_comms_mode' not in response
@@ -1278,7 +1297,7 @@ class LoraRegAPI:
             BuiltIn().log("Response contains incorrect value!", "ERROR")
             return False
 
-    def validate_get_pilot_light_mode_command(self, response, state):
+    def validate_get_meter_pilot_light_mode_command(self, response, state):
 
         state_para_1 = state[0].rsplit('=',1)[1]
         state_para_2 = state[1].rsplit('=',1)[1]
@@ -1286,7 +1305,7 @@ class LoraRegAPI:
 
         print 'state_para_1 = ' + str(state_para_1)
         print 'state_para_2 = ' + str(state_para_2)
-        print 'state_para_3 = ' + str(state_para_3) 
+        print 'state_para_3 = ' + str(state_para_3)
 
         elements = {"result_code","pilot_light_mode", "pilot_flow_min", "pilot_flow_max"}
         # self.print_response_data(response, *elements)
@@ -1325,7 +1344,7 @@ class LoraRegAPI:
             BuiltIn().log("Response contains incorrect value!", "ERROR")
             return False
 
-    def validate_get_earthquake_sensor_state(self, response, state):
+    def validate_get_meter_earthquake_sensor_state(self, response, state):
 
         elements = {"result_code","earthquake_sensor_state"}
         # self.print_response_data(response, *elements)
@@ -1351,6 +1370,58 @@ class LoraRegAPI:
                 return False
             elif int(response['earthquake_sensor_state']) > 1:
                 BuiltIn().log("earthquake_sensor_state state greater than 1!", "ERROR")
+                return False
+            else:
+                BuiltIn().log("Validation Successful.", "INFO")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_app_details(self, response):
+
+        elements = ['result_code', 'profile_id', 'profile_name', 'app_starttime', 'app_uptime_sec', 'app_version', 'device_model', 'network_protocol', 'gateway_eid', 'qname']
+        app_version = BuiltIn().get_variable_value("${LUA_VER}")
+        app_version = str(app_version)
+
+        if  (
+                'result_code' not in response or
+                'profile_id' not in response or
+                'profile_name' not in response or
+                'app_starttime' not in response or
+                'app_uptime_sec' not in response or
+                'app_version' not in response or
+                'device_model' not in response or
+                'network_protocol' not in response or
+                'gateway_eid' not in response or
+                'qname' not in response
+            ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+            elif len(response['profile_id'].split(':')) != 6:
+                BuiltIn().log("Invalid profile id found!", "ERROR")
+                return False
+            elif str(response['profile_name']) != str(app_version):
+                BuiltIn().log("Profile name does not match!", "ERROR")
+                return False
+            elif str(response['app_version']) != str(app_version.split('-')[3]):
+                BuiltIn().log("Lua app version does not match!", "ERROR")
+                return False
+            elif str(response['device_model']) != str(app_version.split('-')[2][:2]):
+                BuiltIn().log("Device model does not match!", "ERROR")
+                return False
+            elif str(response['network_protocol']) != 'NBIOT':
+                BuiltIn().log("Network protocol does not match!", "ERROR")
+                return False
+            elif len(str(response['gateway_eid']).split(':')) != 8:
+                BuiltIn().log("Invalid gateway eid found!", "ERROR")
+                return False
+            elif str(response['qname'].split('-')[0]) != "VM":
+                BuiltIn().log("Invalid qname found!", "ERROR")
                 return False
             else:
                 BuiltIn().log("Validation Successful.", "INFO")

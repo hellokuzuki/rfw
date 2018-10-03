@@ -3,7 +3,6 @@ Library     LoraRegAPI    TestData.xlsx    NB SERVER
 Resource    ../../Resources/regression_api_keywords.robot
 Resource    ../../Resources/regression_api_setting.robot
 
-
 *** Variables ***
 ${get_cmd}        GET_NIC_CURRENT_MODE
 ${para_1}         mode_id=4,MAC_polling_interval=304

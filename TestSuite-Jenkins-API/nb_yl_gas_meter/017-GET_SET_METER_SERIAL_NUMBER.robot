@@ -1,7 +1,7 @@
 *** Settings ***
+Library     LoraRegAPI    TestData.xlsx    NB SERVER
 Resource    ../../Resources/regression_api_keywords.robot
 Resource    ../../Resources/regression_api_setting.robot
-Library     LoraRegAPI    @{environment}
 
 *** Variables ***
 ${get_cmd}       GET_METER_SERIAL_NUMBER

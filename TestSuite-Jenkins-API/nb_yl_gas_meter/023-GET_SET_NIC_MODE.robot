@@ -3,7 +3,6 @@ Library     LoraRegAPI    TestData.xlsx    NB SERVER
 Resource    ../../Resources/regression_api_keywords.robot
 Resource    ../../Resources/regression_api_setting.robot
 
-
 *** Variables ***
 ${get_cmd}        GET_NIC_MODE
 ${set_cmd}        SET_NIC_MODE
