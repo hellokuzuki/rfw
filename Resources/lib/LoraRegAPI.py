@@ -176,10 +176,10 @@ class LoraRegAPI:
         elif command == 'SET_METER_CUSTOMERID':
             status = self.validate_reponse_of_set_command(data)
 
-        elif command == 'GET_METER_TIME':
+        elif command == 'GET_METER_TIME' or command == 'GET_YS_METER_TIME':
             status = self.validate_get_meter_time_command(data, state)
 
-        elif command == 'SET_METER_TIME':
+        elif command == 'SET_METER_TIME' or command == 'SET_YS_METER_TIME':
             status = self.validate_reponse_of_set_command(data)
 
         elif command == 'SET_CONFIG_CENTER_SHUTDOWN':
@@ -293,6 +293,51 @@ class LoraRegAPI:
         elif command == 'GET_APP_DETAILS':
             status = self.validate_get_app_details(data)
 
+        elif command == 'GET_NIC_BATTERY_LEVEL':
+            status = self.validate_get_nic_battery_level(data)
+
+        elif command == 'GET_NIC_BATTERY_PARAMETERS':
+            status = self.validate_get_nic_battery_parameters_command(data, state)
+
+        elif command == 'SET_NIC_BATTERY_PARAMETERS':
+            status = self.validate_reponse_of_set_command(data)
+
+        elif command == 'GET_NIC_DIAGNOSTIC_DATA':
+            status = self.validate_get_nic_diagnostic_data_command(data, state)
+
+        elif command == 'SET_YL_METER_DATE_TIME':
+            status = self.validate_reponse_of_set_command(data)
+
+        elif command == 'GET_YL_METER_STATUS':
+            status = self.validate_get_ylxs_meter_status(data)
+
+        elif command == 'SET_YL_PRESSURE_ALARM_LEVEL_HIGH':
+            status = self.validate_reponse_of_set_command(data)
+
+        elif command == 'SET_YL_PRESSURE_ALARM_LEVEL_LOW':
+            status = self.validate_reponse_of_set_command(data)
+
+        elif command == 'SET_YL_METER_EXTEND_USE_TIME':
+            status = self.validate_reponse_of_set_command(data)
+
+        elif command == 'SET_YL_LEAK_DETECT_RANGE':
+            status = self.validate_reponse_of_set_command(data)
+
+        elif command == 'GET_YL_METER_CONFIGURATION':
+            status = self.validate_get_ylxs_meter_configuration_command(data, state)
+
+        elif command == 'GET_YL_METER_ID':
+            status = self.validate_get_ylxs_meter_id(data)
+
+        elif command == 'GET_YL_LAST_5_SHUT_OFF_LOG':
+            status = self.validate_get_ylxs_last_5_shut_off_log(data)
+
+        elif command == 'GET_YL_LAST_5_STATUS_LOG':
+            status = self.validate_get_ylxs_last_5_status_log(data)
+
+        elif command == 'SET_YL_METER_SYSTEM_RESET':
+            status = self.validate_reponse_of_set_command(data)
+
         else:
             status = False
 
@@ -322,6 +367,14 @@ class LoraRegAPI:
                 response['model_id'] == 0
             ):
             BuiltIn().log("Yung Loong Get Meter Type validate successful.", "INFO")
+            return True
+        elif (
+                meter_type == "yungloong" and
+                response['result_code'] == 0 and
+                response['manufacturer'] == 'YungLoong' and
+                response['model_id'] == 1
+            ):
+            BuiltIn().log("New Yung Loong Get Meter Type validate successful.", "INFO")
             return True
         elif (
                 meter_type == "micom" and
@@ -362,10 +415,14 @@ class LoraRegAPI:
 
         elements = {"result_code", "valve_state"}
 
-        if "YL" in response['profile_name'] or "YS" in response['profile_name']:
+        if "YL" in response['profile_name']:
+            meter_type = "YL"
+        elif "Y" in response['profile_name']:
             meter_type = "yungloong"
         else:
             meter_type = "micom"
+
+        BuiltIn().log_to_console("Meter type = " + str(meter_type))
 
         if  (
                 'result_code' not in response or
@@ -383,6 +440,12 @@ class LoraRegAPI:
             elif meter_type == "yungloong" and int(state) == 0 and response['valve_state'] != 0:
                 BuiltIn().log("Valve state should return 0, But 1 has been returned!", "ERROR")
                 return False
+            elif meter_type == "YL" and int(state) == 1 and response['valve_state'] != 1:
+                BuiltIn().log("Valve state should return 1, But 0 has been returned!", "WARN")
+                return True
+            elif meter_type == "YL" and int(state) == 0 and response['valve_state'] != 0:
+                BuiltIn().log("Valve state should return 0, But 1 has been returned!", "WARN")
+                return True
             elif response['valve_state'] > 1:
                 BuiltIn().log("Valve state greater than 1!", "ERROR")
                 return False
@@ -402,7 +465,6 @@ class LoraRegAPI:
     def validate_reponse_of_set_command(self, response):
 
         elements = {"result_code"}
-
         if 'result_code' not in response:
             BuiltIn().log("Response does not contain correct parameters!", "ERROR")
             return False
@@ -1314,7 +1376,9 @@ class LoraRegAPI:
                 'result_code' not in response or
                 'pilot_light_mode' not in response or
                 'pilot_flow_min' not in response or
-                'pilot_flow_max' not in response
+                'pilot_flow_max' not in response or
+                'learn_remaining_time' not in response or
+                'learn_get_value'not in response
             ):
             BuiltIn().log("Response does not contain correct parameters!", "ERROR")
             return False
@@ -1382,9 +1446,10 @@ class LoraRegAPI:
 
         elements = ['result_code', 'profile_id', 'profile_name', 'app_starttime', 'app_uptime_sec', 'app_version', 'device_model', 'network_protocol', 'gateway_eid', 'qname']
         app_version = BuiltIn().get_variable_value("${LUA_VER}")
+
         app_version = str(app_version)
 
-        if  (
+        if (
                 'result_code' not in response or
                 'profile_id' not in response or
                 'profile_name' not in response or
@@ -1411,10 +1476,19 @@ class LoraRegAPI:
             elif str(response['app_version']) != str(app_version.split('-')[3]):
                 BuiltIn().log("Lua app version does not match!", "ERROR")
                 return False
-            elif str(response['device_model']) != str(app_version.split('-')[2][:2]):
+            # elif str(response['device_model']) != str(app_version.split('-')[2][:4]):
+            #     BuiltIn().log("New YL Device model does not match!", "ERROR")
+            #     return False
+            elif 'YL' in str(app_version) and str(response['device_model']) != str(app_version.split('-')[2][:2]):
+                BuiltIn().log("New YL Device model does not match!", "ERROR")
+                return False
+            elif 'YL' not in str(app_version) and str(response['device_model']) != str(app_version.split('-')[2][:2]):
                 BuiltIn().log("Device model does not match!", "ERROR")
                 return False
-            elif str(response['network_protocol']) != 'NBIOT':
+            elif str(app_version.split('-')[1]) == 'NBMT' and str(response['network_protocol']) != 'NBIOT':
+                BuiltIn().log("Network protocol does not match!", "ERROR")
+                return False
+            elif str(app_version.split('-')[1]) == 'LMT' and str(response['network_protocol']) != 'LORA':
                 BuiltIn().log("Network protocol does not match!", "ERROR")
                 return False
             elif len(str(response['gateway_eid']).split(':')) != 8:
@@ -1423,6 +1497,266 @@ class LoraRegAPI:
             elif str(response['qname'].split('-')[0]) != "VM":
                 BuiltIn().log("Invalid qname found!", "ERROR")
                 return False
+            else:
+                BuiltIn().log("Validation Successful.", "INFO")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_ylxs_meter_status(self, response):
+
+        if (
+                'result_code' not in response or
+                'timestamp' not in response or
+                'date' not in response or
+                'time' not in response or
+                'meter_reading' not in response or
+                'pressure' not in response or
+                'internal_battery_volt' not in response or
+                'external_battery_volt' not in response or
+                'flow_rate' not in response or
+                'three_min_check' not in response or
+                'other' not in response or
+                'extend' not in response
+            ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+            if str(response['date']) is not str(datetime.now().strftime("%d/%m/%y")):
+                BuiltIn().log("date validation failed", "WARN")
+                BuiltIn().log(str(response['date']), "WARN")
+                BuiltIn().log(str(datetime.now().strftime("%d/%m/%y")), "WARN")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_ylxs_meter_configuration_command(self, response, state):
+        elements = ['result_code', 'high_Pressure_action', 'high_pressure', 'low_pressure_action', 'low_pressure_min', 'low_pressure_max', 'extend_time', 'extend_flow', 'leak_action', 'leak_shutoff_day', 'leak_range_min', 'leak_range_max', 'other', 'gear_number']
+
+        extend_action = state[0].rsplit('=', 1)[1]
+        extend_time = state[1].rsplit('=', 1)[1]
+        high_Pressure_action = state[2].rsplit('=', 1)[1]
+        high_pressure = state[3].rsplit('=', 1)[1]
+        low_pressure_action = state[4].rsplit('=', 1)[1]
+        low_pressure_min = state[5].rsplit('=', 1)[1]
+        low_pressure_max = state[6].rsplit('=', 1)[1]
+        leak_action = state[7].rsplit('=', 1)[1]
+        leak_shutoff_day = state[8].rsplit('=', 1)[1]
+        leak_range_min = state[9].rsplit('=', 1)[1]
+        leak_range_max = state[10].rsplit('=', 1)[1]
+
+        BuiltIn().log_to_console('extend_action  = ' + str(extend_action))
+        BuiltIn().log_to_console('extend_time  = ' + str(extend_time))
+        BuiltIn().log_to_console('high_Pressure_action  = ' + str(high_Pressure_action))
+        BuiltIn().log_to_console('high_pressure  = ' + str(high_pressure))
+        BuiltIn().log_to_console('low_pressure_action  = ' + str(low_pressure_action))
+        BuiltIn().log_to_console('low_pressure_min  = ' + str(low_pressure_min))
+        BuiltIn().log_to_console('low_pressure_max  = ' + str(low_pressure_max))
+        BuiltIn().log_to_console('leak_action  = ' + str(leak_action))
+        BuiltIn().log_to_console('leak_shutoff_day  = ' + str(leak_shutoff_day))
+        BuiltIn().log_to_console('leak_range_min  = ' + str(leak_range_min))
+        BuiltIn().log_to_console('leak_range_max  = ' + str(leak_range_max))
+
+        if (
+                'result_code' not in response or
+                'extend_action' not in response or
+                'extend_time' not in response or
+                'high_Pressure_action' not in response or
+                'high_pressure' not in response or
+                'low_pressure_action' not in response or
+                'low_pressure_min' not in response or
+                'low_pressure_max' not in response or
+                'leak_action' not in response or
+                'leak_shutoff_day' not in response or
+                'leak_range_min' not in response or
+                'leak_range_max' not in response or
+                'excess_flow' not in response or
+                'other' not in response or
+                'gear_number' not in response
+            ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+            elif int(extend_action) != response['extend_action']:
+                BuiltIn().log("Invalid extend_action found!", "ERROR")
+                return False
+            elif int(extend_time) != response['extend_time']:
+                BuiltIn().log("Invalid extend_time found!", "ERROR")
+                return False
+            elif int(high_Pressure_action) != response['high_Pressure_action']:
+                BuiltIn().log("Invalid high_Pressure_action found!", "ERROR")
+                return False
+            elif int(high_pressure) != response['high_pressure']:
+                BuiltIn().log("Invalid high_pressure found!", "ERROR")
+                return False
+            elif int(low_pressure_action) != response['low_pressure_action']:
+                BuiltIn().log("Invalid low_pressure_action found!", "ERROR")
+                return False
+            elif int(low_pressure_min) != response['low_pressure_min']:
+                BuiltIn().log("Invalid low_pressure_min found!", "ERROR")
+                return False
+            elif int(low_pressure_max) != response['low_pressure_max']:
+                BuiltIn().log("Invalid low_pressure_max found!", "ERROR")
+                return False
+            elif int(leak_action) != response['leak_action']:
+                BuiltIn().log("Invalid leak_action found!", "ERROR")
+                return False
+            elif int(leak_shutoff_day) != response['leak_shutoff_day']:
+                BuiltIn().log("Invalid leak_shutoff_day found!", "ERROR")
+                return False
+            elif int(leak_range_min) != response['leak_range_min']:
+                BuiltIn().log("Invalid leak_range_min found!", "ERROR")
+                return False
+            elif int(leak_range_max) != response['leak_range_max']:
+                BuiltIn().log("Invalid leak_range_max found!", "ERROR")
+                return False
+            else:
+                BuiltIn().log("Validation Successful.", "INFO")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_ylxs_meter_id(self, response):
+
+        if(
+                'result_code' not in response or
+                'meter_ID' not in response or
+                'fw_version' not in response or
+                'hw_version' not in response
+        ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_ylxs_last_5_shut_off_log(self, response):
+
+        if (
+                'result_code' not in response
+            ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_ylxs_last_5_status_log(self, response):
+
+        if(
+                'result_code' not in response
+        ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_nic_battery_level(self, response):
+
+        if(
+                'result_code' not in response or
+                'battery_percentage' not in response
+        ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+            elif int(response['battery_percentage']) > 100 or int(response['battery_percentage']) < 0:
+                BuiltIn().log("Incorrect battery_percentage has been returned!", "ERROR")
+                return False
+            else:
+                BuiltIn().log("Validation Successful.", "INFO")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_nic_battery_parameters_command(self, response, state):
+
+        state_para_1 = state[0].rsplit('=',1)[1]
+        state_para_2 = state[1].rsplit('=',1)[1]
+        state_para_3 = state[2].rsplit('=',1)[1]
+        state_para_4 = state[3].rsplit('=',1)[1]
+
+        print 'initial_capacity_mAh = ' + str(state_para_1)
+        print 'remaining_capacity_mAh = ' + str(state_para_2)
+        print 'derating_percentage = ' + str(state_para_3)
+        print 'correction_factor = ' + str(state_para_4)
+
+        if  (
+                'result_code' not in response or
+                'initial_capacity_mAh' not in response or
+                'remaining_capacity_mAh' not in response or
+                'derating_percentage' not in response or
+                'correction_factor' not in response
+            ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
+            elif response['result_code'] == 8:
+                BuiltIn().log("Result_code = 8, Unknon Meter State has been returned!", "WARN")
+                return True
+            elif state is None:
+                BuiltIn().log("nic_battery_parameters stats was not validated.", "INFO")
+                return True
+            elif int(state_para_1) != response['initial_capacity_mAh']:
+                BuiltIn().log("Incorrect initial_capacity_mAh value has been returned!", "ERROR")
+                return False
+            elif int(state_para_2) != response['remaining_capacity_mAh']:
+                BuiltIn().log("Incorrect remaining_capacity_mAh value has been returned!", "ERROR")
+                return False
+            elif int(state_para_3) != response['derating_percentage']:
+                BuiltIn().log("Incorrect derating_percentage value has been returned!", "ERROR")
+                return False
+            # elif float(state_para_4) != float(response['correction_factor']):
+            #     BuiltIn().log("Incorrect correction_factor value has been returned!", "ERROR")
+            #     return False
+            else:
+                BuiltIn().log("Validation Successful.", "INFO")
+                return True
+        else:
+            BuiltIn().log("Response contains incorrect value!", "ERROR")
+            return False
+
+    def validate_get_nic_diagnostic_data_command(self, response, state):
+
+        if(
+                'result_code' not in response or
+                'diagnostic_data' not in response
+        ):
+            BuiltIn().log("Response does not contain correct parameters!", "ERROR")
+            return False
+        elif response['result_code'] < 10:
+            if response['result_code'] == 7:
+                BuiltIn().log("Result_code = 7, Meter not attached!", "WARN")
+                return True
             else:
                 BuiltIn().log("Validation Successful.", "INFO")
                 return True
